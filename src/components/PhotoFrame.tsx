@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { Upload, X } from 'lucide-react';
+import { Theme } from '@/types/styles';
 
 interface PhotoFrameProps {
   id: string;
@@ -11,6 +11,7 @@ interface PhotoFrameProps {
   };
   size: 'small' | 'medium' | 'large';
   caption?: string;
+  theme?: Theme;
   onImageUpload?: (id: string, file: File) => void;
   onCaptionChange?: (id: string, caption: string) => void;
 }
@@ -21,6 +22,7 @@ const PhotoFrame = ({
   position, 
   size, 
   caption = "", 
+  theme,
   onImageUpload,
   onCaptionChange 
 }: PhotoFrameProps) => {
@@ -66,7 +68,8 @@ const PhotoFrame = ({
       style={{ 
         '--rotation': `${rotation}deg`,
         top: position.top,
-        left: position.left
+        left: position.left,
+        backgroundColor: theme?.colors.cardBackground || '#FFFFFF'
       } as React.CSSProperties}
     >
       {/* Photo area */}
@@ -108,14 +111,16 @@ const PhotoFrame = ({
             onChange={(e) => setTempCaption(e.target.value)}
             onBlur={handleCaptionSubmit}
             onKeyPress={(e) => e.key === 'Enter' && handleCaptionSubmit()}
-            className="w-full text-sm font-handwritten text-gray-700 bg-transparent border-none outline-none text-center"
+            className={`w-full text-sm ${theme?.fonts.caption || 'font-handwritten'} bg-transparent border-none outline-none text-center`}
+            style={{ color: theme?.colors.primary || '#374151' }}
             placeholder="Add caption..."
             autoFocus
           />
         ) : (
           <p 
             onClick={() => setIsEditing(true)}
-            className="text-sm font-handwritten text-gray-700 text-center cursor-text min-h-[20px] hover:bg-gray-50 rounded px-1"
+            className={`text-sm ${theme?.fonts.caption || 'font-handwritten'} text-center cursor-text min-h-[20px] hover:bg-gray-50 rounded px-1`}
+            style={{ color: theme?.colors.primary || '#374151' }}
           >
             {caption || "Add caption..."}
           </p>
