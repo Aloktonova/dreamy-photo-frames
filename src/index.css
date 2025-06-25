@@ -134,7 +134,7 @@
     0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-/* Custom styles for polaroid effects */
+/* Enhanced polaroid effects with better photo handling */
 .polaroid-frame {
   background: white;
   padding: 12px 12px 40px 12px;
@@ -146,6 +146,12 @@
   transform: rotate(var(--rotation, 0deg));
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  /* Ensure consistent dimensions */
+  min-width: fit-content;
+  min-height: fit-content;
+  /* Prevent layout shifts */
+  will-change: transform;
+  contain: layout style;
 }
 
 .polaroid-frame::before {
@@ -163,14 +169,31 @@
 }
 
 .polaroid-frame:hover {
-  transform: rotate(var(--rotation, 0deg)) scale(1.05) translateY(-8px);
+  transform: rotate(var(--rotation, 0deg)) scale(1.03) translateY(-4px);
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.15),
     0 8px 25px rgba(0, 0, 0, 0.1);
+  z-index: 20;
 }
 
 .polaroid-frame:hover::before {
   opacity: 1;
+}
+
+/* Improved image container to prevent layout shifts */
+.polaroid-frame img {
+  /* Ensure images maintain aspect ratio and don't break layout */
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  /* Prevent image dragging which can break layout */
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  /* Smooth loading */
+  image-rendering: optimizeQuality;
 }
 
 .tape {
@@ -245,4 +268,28 @@
   color: #64748b;
   font-weight: 300;
   letter-spacing: 0.025em;
+}
+
+/* Prevent layout shifts during image loading */
+.photo-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.photo-container::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 0;
+  padding-bottom: 75%; /* 4:3 aspect ratio */
+  background: #f3f4f6;
+}
+
+.photo-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
