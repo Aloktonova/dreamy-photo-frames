@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,6 +99,34 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-clean;
+    background: linear-gradient(135deg, #FAF9F6 0%, #F5F3F0 100%);
   }
+}
+
+/* Custom styles for polaroid effects */
+.polaroid-frame {
+  background: white;
+  padding: 12px 12px 40px 12px;
+  border-radius: 2px;
+  box-shadow: var(--tw-shadow-polaroid);
+  transform: rotate(var(--rotation, 0deg));
+  transition: all 0.3s ease;
+}
+
+.polaroid-frame:hover {
+  transform: rotate(var(--rotation, 0deg)) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.tape {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: var(--tw-shadow-tape);
+}
+
+.sticker {
+  background: var(--sticker-color);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

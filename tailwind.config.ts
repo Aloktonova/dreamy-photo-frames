@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,20 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Pastel colors for the photo collage
+				pastel: {
+					cream: '#FAF9F6',
+					pink: '#FFE5E5',
+					lavender: '#E8E5FF',
+					mint: '#E5F7F0',
+					peach: '#FFE8D6',
+					blue: '#E5F2FF'
 				}
+			},
+			fontFamily: {
+				'handwritten': ['Caveat', 'cursive'],
+				'clean': ['Inter', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +98,26 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-8px)' }
+				},
+				'gentle-bounce': {
+					'0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+					'50%': { transform: 'translateY(-4px) rotate(1deg)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 3s ease-in-out infinite',
+				'gentle-bounce': 'gentle-bounce 4s ease-in-out infinite'
+			},
+			boxShadow: {
+				'polaroid': '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.05)',
+				'tape': '0 2px 4px rgba(0, 0, 0, 0.1)',
+				'soft': '0 2px 20px rgba(0, 0, 0, 0.08)'
 			}
 		}
 	},
