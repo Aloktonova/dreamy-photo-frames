@@ -1,54 +1,98 @@
 import { LayoutConfig } from '@/types/styles';
 
 class AILayoutGenerator {
-  private getCollagePosition(index: number, total: number): { top: string; left: string } {
-    // Create a 3x3 grid-like layout similar to reference images
-    const positions = [
-      { top: '8%', left: '8%' },    // top-left
-      { top: '8%', left: '42%' },   // top-center
-      { top: '8%', left: '72%' },   // top-right
-      { top: '35%', left: '8%' },   // mid-left
-      { top: '35%', left: '72%' },  // mid-right (skip center for heart)
-      { top: '62%', left: '8%' },   // bottom-left
-      { top: '62%', left: '42%' },  // bottom-center
-      { top: '62%', left: '72%' },  // bottom-right
-      { top: '20%', left: '25%' },  // additional scattered positions
-    ];
-    
-    if (index < positions.length) {
-      return positions[index];
-    }
-    
-    // Fallback to random positions
-    const top = Math.random() * 70 + 10;
-    const left = Math.random() * 70 + 10;
-    return { top: `${top}%`, left: `${left}%` };
+  private layoutStyles = [
+    'scattered', 'grid', 'cluster', 'diagonal', 'circular', 'vintage-stack'
+  ];
+
+  private getScatteredLayout(frameCount: number): { top: string; left: string }[] {
+    return Array.from({ length: frameCount }, () => ({
+      top: `${Math.random() * 60 + 10}%`,
+      left: `${Math.random() * 60 + 10}%`
+    }));
   }
 
-  private getRandomPosition(): { top: string; left: string } {
-    const top = Math.random() * 70 + 5; // 5% to 75%
-    const left = Math.random() * 80 + 5; // 5% to 85%
-    return {
-      top: `${top}%`,
-      left: `${left}%`
-    };
+  private getGridLayout(frameCount: number): { top: string; left: string }[] {
+    const cols = Math.ceil(Math.sqrt(frameCount));
+    const rows = Math.ceil(frameCount / cols);
+    const positions = [];
+    
+    for (let i = 0; i < frameCount; i++) {
+      const row = Math.floor(i / cols);
+      const col = i % cols;
+      positions.push({
+        top: `${15 + (row * 60 / rows)}%`,
+        left: `${15 + (col * 60 / cols)}%`
+      });
+    }
+    return positions;
+  }
+
+  private getClusterLayout(frameCount: number): { top: string; left: string }[] {
+    const centerX = 40;
+    const centerY = 40;
+    const radius = 25;
+    
+    return Array.from({ length: frameCount }, (_, i) => {
+      const angle = (i * 360 / frameCount) * (Math.PI / 180);
+      const x = centerX + Math.cos(angle) * radius + (Math.random() * 10 - 5);
+      const y = centerY + Math.sin(angle) * radius + (Math.random() * 10 - 5);
+      
+      return {
+        top: `${Math.max(5, Math.min(75, y))}%`,
+        left: `${Math.max(5, Math.min(75, x))}%`
+      };
+    });
+  }
+
+  private getDiagonalLayout(frameCount: number): { top: string; left: string }[] {
+    return Array.from({ length: frameCount }, (_, i) => ({
+      top: `${10 + (i * 50 / frameCount)}%`,
+      left: `${10 + (i * 60 / frameCount)}%`
+    }));
+  }
+
+  private getCircularLayout(frameCount: number): { top: string; left: string }[] {
+    const centerX = 45;
+    const centerY = 45;
+    const radius = 30;
+    
+    return Array.from({ length: frameCount }, (_, i) => {
+      const angle = (i * 360 / frameCount) * (Math.PI / 180);
+      return {
+        top: `${centerY + Math.sin(angle) * radius}%`,
+        left: `${centerX + Math.cos(angle) * radius}%`
+      };
+    });
+  }
+
+  private getVintageStackLayout(frameCount: number): { top: string; left: string }[] {
+    // Overlapping stack effect
+    const baseX = 25;
+    const baseY = 20;
+    
+    return Array.from({ length: frameCount }, (_, i) => ({
+      top: `${baseY + i * 8 + Math.random() * 10}%`,
+      left: `${baseX + i * 6 + Math.random() * 15}%`
+    }));
   }
 
   private getRandomRotation(): number {
-    return Math.random() * 16 - 8; // -8 to 8 degrees for more natural look
+    return Math.random() * 20 - 10; // -10 to 10 degrees
   }
 
-  private getCollageSize(): 'small' | 'medium' | 'large' {
-    const sizes: Array<'small' | 'medium' | 'large'> = ['small', 'medium', 'large'];
-    const weights = [0.4, 0.4, 0.2]; // More varied sizes
-    const random = Math.random();
-    let sum = 0;
-    
-    for (let i = 0; i < weights.length; i++) {
-      sum += weights[i];
-      if (random <= sum) return sizes[i];
-    }
-    return 'medium';
+  private getVariedSize(): 'small' | 'medium' | 'large' {
+    const rand = Math.random();
+    if (rand < 0.3) return 'small';
+    if (rand < 0.7) return 'medium';
+    return 'large';
+  }
+
+  private getRandomPosition(): { top: string; left: string } {
+    return {
+      top: `${Math.random() * 70 + 5}%`,
+      left: `${Math.random() * 80 + 5}%`
+    };
   }
 
   private getRandomDecorativeType(): 'tape' | 'sticker' | 'doodle' {
@@ -57,53 +101,53 @@ class AILayoutGenerator {
   }
 
   generateCollageLayout(frameCount: number = 8): LayoutConfig {
-    const frames = [];
-    const decorativeElements = [];
-
-    // Generate frames in a more organized collage style
-    for (let i = 0; i < frameCount; i++) {
-      const position = this.getCollagePosition(i, frameCount);
-      const size = this.getCollageSize();
-      
-      frames.push({
-        id: `frame${i + 1}`,
-        rotation: this.getRandomRotation(),
-        position,
-        size
-      });
+    // Pick a random layout style
+    const layoutStyle = this.layoutStyles[Math.floor(Math.random() * this.layoutStyles.length)];
+    console.log(`Generating ${layoutStyle} layout with ${frameCount} frames`);
+    
+    let positions: { top: string; left: string }[];
+    
+    switch (layoutStyle) {
+      case 'grid':
+        positions = this.getGridLayout(frameCount);
+        break;
+      case 'cluster':
+        positions = this.getClusterLayout(frameCount);
+        break;
+      case 'diagonal':
+        positions = this.getDiagonalLayout(frameCount);
+        break;
+      case 'circular':
+        positions = this.getCircularLayout(frameCount);
+        break;
+      case 'vintage-stack':
+        positions = this.getVintageStackLayout(frameCount);
+        break;
+      default: // scattered
+        positions = this.getScatteredLayout(frameCount);
     }
 
-    // Generate fewer, more strategic decorative elements
-    for (let i = 0; i < 6; i++) {
-      decorativeElements.push({
-        type: this.getRandomDecorativeType(),
-        position: this.getRandomPosition(),
-        rotation: Math.random() * 60 - 30, // -30 to 30 degrees
-        size: 'small' as const
-      });
-    }
+    const frames = positions.map((position, i) => ({
+      id: `frame${i + 1}`,
+      rotation: this.getRandomRotation(),
+      position,
+      size: this.getVariedSize()
+    }));
+
+    // Generate complementary decorative elements
+    const decorativeElements = Array.from({ length: 4 + Math.floor(Math.random() * 4) }, () => ({
+      type: this.getRandomDecorativeType(),
+      position: this.getRandomPosition(),
+      rotation: Math.random() * 60 - 30,
+      size: 'small' as const
+    }));
 
     return { frames, decorativeElements };
   }
 
-  // Keep the original method for backward compatibility
-  generateLayout(frameCount: number = 6, decorativeCount: number = 8): LayoutConfig {
+  // Keep backward compatibility
+  generateLayout(frameCount: number = 6): LayoutConfig {
     return this.generateCollageLayout(frameCount);
-  }
-
-  private hasOverlap(
-    position: { top: string; left: string }, 
-    usedAreas: Array<{ top: number; left: number; size: string }>
-  ): boolean {
-    const newTop = parseFloat(position.top);
-    const newLeft = parseFloat(position.left);
-    
-    return usedAreas.some(area => {
-      const distance = Math.sqrt(
-        Math.pow(newTop - area.top, 2) + Math.pow(newLeft - area.left, 2)
-      );
-      return distance < 12; // Reduced minimum distance for tighter collage feel
-    });
   }
 }
 

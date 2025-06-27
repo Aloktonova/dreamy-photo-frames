@@ -14,7 +14,7 @@ const PhotoCollage = () => {
   const [photos, setPhotos] = useState<{[key: string]: { file?: File, caption: string }}>({});
   const [currentTheme, setCurrentTheme] = useState<Theme>(themes[1]);
   const [layout, setLayout] = useState(() => aiLayoutGenerator.generateCollageLayout());
-  const [customBackground, setCustomBackground] = useState<string>(currentTheme.colors.background);
+  const [customBackground, setCustomBackground] = useState<string>('linear-gradient(135deg, #FFF8E7 0%, #FFE5B4 100%)');
   const [frameCustomizationOpen, setFrameCustomizationOpen] = useState(false);
   const [backgroundCustomizationOpen, setBackgroundCustomizationOpen] = useState(false);
   const [stickerPanelOpen, setStickerPanelOpen] = useState(false);
@@ -24,6 +24,7 @@ const PhotoCollage = () => {
   const [historyIndex, setHistoryIndex] = useState(-1);
 
   const generateNewLayout = () => {
+    console.log('Generating new AI layout...');
     const newLayout = aiLayoutGenerator.generateCollageLayout();
     setLayout(newLayout);
     setPhotos({});
@@ -31,6 +32,7 @@ const PhotoCollage = () => {
   };
 
   const handleThemeChange = (theme: Theme) => {
+    console.log('Changing theme to:', theme.name);
     setCurrentTheme(theme);
     setCustomBackground(theme.colors.background);
     saveToHistory();
@@ -118,66 +120,55 @@ const PhotoCollage = () => {
             </p>
           </div>
           
-          {/* Style Manager */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-lg border border-white/50">
-            <StyleManager
-              currentTheme={currentTheme}
-              onThemeChange={handleThemeChange}
-              onGenerateLayout={generateNewLayout}
-            />
-          </div>
+          {/* Modern Sticky Toolbar */}
+          <StyleManager
+            currentTheme={currentTheme}
+            onThemeChange={handleThemeChange}
+            onGenerateLayout={generateNewLayout}
+          />
           
-          {/* Enhanced Action Buttons */}
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 sm:mb-8">
+          {/* Secondary Action Buttons */}
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mt-4 mb-6 sm:mb-8">
             {/* Undo/Redo */}
             <button 
               onClick={undo}
               disabled={historyIndex <= 0}
-              className="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
-              <Undo size={16} />
-              <span className="hidden sm:inline font-medium text-gray-700">Undo</span>
+              <Undo size={14} />
+              <span className="hidden sm:inline">Undo</span>
             </button>
             
             <button 
               onClick={redo}
               disabled={historyIndex >= history.length - 1}
-              className="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
-              <Redo size={16} />
-              <span className="hidden sm:inline font-medium text-gray-700">Redo</span>
+              <Redo size={14} />
+              <span className="hidden sm:inline">Redo</span>
             </button>
 
-            {/* Existing buttons */}
-            <button 
-              onClick={generateNewLayout}
-              className="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50"
-            >
-              <RefreshCw size={16} />
-              <span className="hidden sm:inline font-medium text-gray-700">New Layout</span>
-            </button>
-            
             {/* Background Customization */}
             <button 
               onClick={() => setBackgroundCustomizationOpen(true)}
-              className="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 text-sm"
             >
-              <Image size={16} />
-              <span className="hidden sm:inline font-medium text-gray-700">Background</span>
+              <Image size={14} />
+              <span className="hidden sm:inline">Background</span>
             </button>
 
             {/* Stickers */}
             <button 
               onClick={() => setStickerPanelOpen(true)}
-              className="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 text-sm"
             >
-              <Sparkles size={16} />
-              <span className="hidden sm:inline font-medium text-gray-700">Stickers</span>
+              <Sparkles size={14} />
+              <span className="hidden sm:inline">Stickers</span>
             </button>
 
-            <button className="flex items-center gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50">
-              <Download size={16} />
-              <span className="hidden sm:inline font-medium text-gray-700">Download</span>
+            <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 text-sm">
+              <Download size={14} />
+              <span className="hidden sm:inline">Download</span>
             </button>
           </div>
         </div>
@@ -284,7 +275,7 @@ const PhotoCollage = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-8 pb-16">
         <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 text-center shadow-lg border border-white/50">
           <p className={`${currentTheme.fonts.caption} text-gray-700 text-sm sm:text-lg`}>
-            💡 Click frames to add photos • Hover over frames for customization • Add stickers for extra magic • Try different backgrounds and themes
+            💡 Click frames to add photos • Hover over frames for customization • Try AI Layout for different arrangements • Add stickers for extra magic
           </p>
         </div>
       </div>
