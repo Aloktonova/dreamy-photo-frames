@@ -121,17 +121,54 @@
   100% { background-position: 0% 50%; }
 }
 
-.modern-shadow {
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+/* Enhanced floating animation */
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(-2deg); 
+  }
+  50% { 
+    transform: translateY(-8px) rotate(2deg); 
+  }
 }
 
-.luxury-shadow {
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Enhanced hover effects */
+.hover-scale {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05) translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 640px) {
+  .mobile-collage {
+    height: 500px !important;
+    padding: 1rem !important;
+  }
+  
+  .mobile-frame {
+    position: relative !important;
+    transform: none !important;
+    margin: 0.5rem !important;
+  }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+  .hover-scale:active {
+    transform: scale(0.95);
+  }
+  
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 /* Enhanced polaroid effects with better photo handling */
@@ -146,10 +183,8 @@
   transform: rotate(var(--rotation, 0deg));
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  /* Ensure consistent dimensions */
   min-width: fit-content;
   min-height: fit-content;
-  /* Prevent layout shifts */
   will-change: transform;
   contain: layout style;
 }
@@ -182,17 +217,14 @@
 
 /* Improved image container to prevent layout shifts */
 .polaroid-frame img {
-  /* Ensure images maintain aspect ratio and don't break layout */
   object-fit: cover;
   width: 100%;
   height: 100%;
-  /* Prevent image dragging which can break layout */
   user-select: none;
   -webkit-user-drag: none;
   -khtml-user-drag: none;
   -moz-user-drag: none;
   -o-user-drag: none;
-  /* Smooth loading */
   image-rendering: optimizeQuality;
 }
 
@@ -281,7 +313,7 @@
   display: block;
   width: 100%;
   height: 0;
-  padding-bottom: 75%; /* 4:3 aspect ratio */
+  padding-bottom: 75%;
   background: #f3f4f6;
 }
 
@@ -292,4 +324,49 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Dreamy particle effects */
+@keyframes sparkle {
+  0%, 100% { 
+    opacity: 0; 
+    transform: scale(0); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+.sparkle-effect {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, #fff 0%, transparent 70%);
+  border-radius: 50%;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .mobile-responsive {
+    padding: 1rem;
+  }
+  
+  .button-mobile {
+    min-height: 48px;
+    font-size: 14px;
+  }
+  
+  .collage-mobile {
+    height: 400px;
+    padding: 1rem;
+  }
+  
+  .frame-mobile {
+    position: static !important;
+    transform: none !important;
+    margin: 0.5rem auto;
+    display: block;
+  }
 }
