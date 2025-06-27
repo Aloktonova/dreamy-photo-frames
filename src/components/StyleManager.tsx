@@ -12,56 +12,48 @@ interface StyleManagerProps {
 
 const StyleManager = ({ currentTheme, onThemeChange, onGenerateLayout }: StyleManagerProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Theme Selection */}
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500">
-            <Palette size={20} className="text-white" />
+      <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-orange-500">
+            <Palette size={16} className="text-white" />
           </div>
-          <span className="font-medium text-lg text-gray-700">Choose Your Aesthetic</span>
+          <span className="font-medium text-gray-700">Style</span>
         </div>
         
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {themes.map((theme) => (
             <button
               key={theme.id}
               onClick={() => onThemeChange(theme)}
-              className={`relative px-6 py-3 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 ${
+              className={`px-4 py-2 rounded-xl font-medium transition-all duration-300 text-sm ${
                 currentTheme.id === theme.id
-                  ? 'bg-gradient-to-r from-gray-800 to-gray-700 text-white shadow-lg scale-105'
-                  : 'bg-white/80 text-gray-700 hover:bg-white shadow-md backdrop-blur-sm border border-white/50'
+                  ? 'bg-gray-800 text-white shadow-lg scale-105'
+                  : 'bg-white/70 text-gray-700 hover:bg-white shadow-md hover:scale-105'
               }`}
-              style={{
-                background: currentTheme.id === theme.id 
-                  ? 'linear-gradient(135deg, #374151 0%, #1f2937 100%)'
-                  : 'rgba(255, 255, 255, 0.9)'
-              }}
             >
-              <span className="relative z-10">{theme.name}</span>
-              {currentTheme.id === theme.id && (
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl"></div>
-              )}
+              {theme.name}
             </button>
           ))}
         </div>
       </div>
 
       {/* AI Generator */}
-      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500">
-            <Sparkles size={16} className="text-white" />
+      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-pink-50 to-orange-50 rounded-xl border border-pink-100">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-orange-500">
+            <Sparkles size={12} className="text-white" />
           </div>
-          <span className="font-medium text-gray-700">AI-Powered Layout Generation</span>
+          <span className="font-medium text-gray-700 text-sm">AI Layout Generator</span>
         </div>
         
         <button
           onClick={onGenerateLayout}
-          className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-medium"
+          className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-orange-500 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 font-medium text-sm"
         >
-          <Wand2 size={18} />
-          <span>Generate Magic</span>
+          <Wand2 size={14} />
+          <span>Generate</span>
         </button>
       </div>
     </div>
