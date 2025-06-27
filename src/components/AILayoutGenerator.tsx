@@ -5,13 +5,15 @@ class AILayoutGenerator {
     'scattered', 'grid', 'cluster', 'diagonal', 'circular', 'vintage-stack'
   ];
 
+  // More dramatic scattered layout with varied sizes
   private getScatteredLayout(frameCount: number): { top: string; left: string }[] {
     return Array.from({ length: frameCount }, () => ({
-      top: `${Math.random() * 60 + 10}%`,
-      left: `${Math.random() * 60 + 10}%`
+      top: `${Math.random() * 65 + 5}%`,
+      left: `${Math.random() * 70 + 5}%`
     }));
   }
 
+  // Cleaner grid with some randomness
   private getGridLayout(frameCount: number): { top: string; left: string }[] {
     const cols = Math.ceil(Math.sqrt(frameCount));
     const rows = Math.ceil(frameCount / cols);
@@ -20,45 +22,60 @@ class AILayoutGenerator {
     for (let i = 0; i < frameCount; i++) {
       const row = Math.floor(i / cols);
       const col = i % cols;
+      // Add slight randomness to break perfect grid
+      const randomOffsetX = Math.random() * 8 - 4;
+      const randomOffsetY = Math.random() * 8 - 4;
       positions.push({
-        top: `${15 + (row * 60 / rows)}%`,
-        left: `${15 + (col * 60 / cols)}%`
+        top: `${12 + (row * 55 / rows) + randomOffsetY}%`,
+        left: `${12 + (col * 65 / cols) + randomOffsetX}%`
       });
     }
     return positions;
   }
 
+  // Tight cluster with overlapping effect
   private getClusterLayout(frameCount: number): { top: string; left: string }[] {
-    const centerX = 40;
-    const centerY = 40;
-    const radius = 25;
+    const centerX = 35 + Math.random() * 20; // Random center
+    const centerY = 35 + Math.random() * 20;
+    const radius = 20 + Math.random() * 15; // Variable cluster size
     
     return Array.from({ length: frameCount }, (_, i) => {
-      const angle = (i * 360 / frameCount) * (Math.PI / 180);
-      const x = centerX + Math.cos(angle) * radius + (Math.random() * 10 - 5);
-      const y = centerY + Math.sin(angle) * radius + (Math.random() * 10 - 5);
+      const angle = (i * 360 / frameCount) * (Math.PI / 180) + Math.random() * 0.5;
+      const distance = radius * (0.3 + Math.random() * 0.7); // Varied distances
+      const x = centerX + Math.cos(angle) * distance;
+      const y = centerY + Math.sin(angle) * distance;
       
       return {
-        top: `${Math.max(5, Math.min(75, y))}%`,
+        top: `${Math.max(5, Math.min(70, y))}%`,
         left: `${Math.max(5, Math.min(75, x))}%`
       };
     });
   }
 
+  // Dramatic diagonal sweep
   private getDiagonalLayout(frameCount: number): { top: string; left: string }[] {
-    return Array.from({ length: frameCount }, (_, i) => ({
-      top: `${10 + (i * 50 / frameCount)}%`,
-      left: `${10 + (i * 60 / frameCount)}%`
-    }));
+    const startX = Math.random() * 20 + 5;
+    const startY = Math.random() * 20 + 5;
+    const direction = Math.random() > 0.5 ? 1 : -1; // Diagonal direction
+    
+    return Array.from({ length: frameCount }, (_, i) => {
+      const progress = i / (frameCount - 1);
+      return {
+        top: `${startY + progress * 55 + Math.random() * 10 - 5}%`,
+        left: `${startX + progress * 60 * direction + Math.random() * 10 - 5}%`
+      };
+    });
   }
 
+  // Perfect circle with varied radii
   private getCircularLayout(frameCount: number): { top: string; left: string }[] {
-    const centerX = 45;
-    const centerY = 45;
-    const radius = 30;
+    const centerX = 40 + Math.random() * 20;
+    const centerY = 40 + Math.random() * 20;
+    const baseRadius = 25 + Math.random() * 10;
     
     return Array.from({ length: frameCount }, (_, i) => {
       const angle = (i * 360 / frameCount) * (Math.PI / 180);
+      const radius = baseRadius + Math.random() * 8 - 4; // Slightly varied radius
       return {
         top: `${centerY + Math.sin(angle) * radius}%`,
         left: `${centerX + Math.cos(angle) * radius}%`
@@ -66,32 +83,54 @@ class AILayoutGenerator {
     });
   }
 
+  // Messy overlapping stack
   private getVintageStackLayout(frameCount: number): { top: string; left: string }[] {
-    // Overlapping stack effect
-    const baseX = 25;
-    const baseY = 20;
+    const baseX = 20 + Math.random() * 20;
+    const baseY = 15 + Math.random() * 20;
     
     return Array.from({ length: frameCount }, (_, i) => ({
-      top: `${baseY + i * 8 + Math.random() * 10}%`,
-      left: `${baseX + i * 6 + Math.random() * 15}%`
+      top: `${baseY + i * 6 + Math.random() * 15}%`,
+      left: `${baseX + i * 4 + Math.random() * 20}%`
     }));
   }
 
+  // Much more dramatic rotation range
   private getRandomRotation(): number {
-    return Math.random() * 20 - 10; // -10 to 10 degrees
+    return Math.random() * 30 - 15; // -15 to 15 degrees for more noticeable tilt
   }
 
+  // More varied size distribution
   private getVariedSize(): 'small' | 'medium' | 'large' {
     const rand = Math.random();
-    if (rand < 0.3) return 'small';
-    if (rand < 0.7) return 'medium';
-    return 'large';
+    if (rand < 0.25) return 'small';   // 25% small
+    if (rand < 0.65) return 'medium';  // 40% medium  
+    return 'large';                    // 35% large
+  }
+
+  // Create dramatic size variations for focus photos
+  private createFocusLayout(frameCount: number): ('small' | 'medium' | 'large')[] {
+    const sizes: ('small' | 'medium' | 'large')[] = [];
+    
+    // Always have 1-2 large focus photos
+    const largeFocusCount = Math.min(2, Math.max(1, Math.floor(frameCount * 0.3)));
+    
+    // Fill with varied sizes
+    for (let i = 0; i < frameCount; i++) {
+      if (i < largeFocusCount) {
+        sizes.push('large');
+      } else {
+        sizes.push(this.getVariedSize());
+      }
+    }
+    
+    // Shuffle the array to randomize large photo positions
+    return sizes.sort(() => Math.random() - 0.5);
   }
 
   private getRandomPosition(): { top: string; left: string } {
     return {
-      top: `${Math.random() * 70 + 5}%`,
-      left: `${Math.random() * 80 + 5}%`
+      top: `${Math.random() * 65 + 5}%`,
+      left: `${Math.random() * 75 + 5}%`
     };
   }
 
@@ -103,7 +142,7 @@ class AILayoutGenerator {
   generateCollageLayout(frameCount: number = 8): LayoutConfig {
     // Pick a random layout style
     const layoutStyle = this.layoutStyles[Math.floor(Math.random() * this.layoutStyles.length)];
-    console.log(`Generating ${layoutStyle} layout with ${frameCount} frames`);
+    console.log(`🎨 Generating dramatic ${layoutStyle} layout with ${frameCount} frames`);
     
     let positions: { top: string; left: string }[];
     
@@ -127,21 +166,27 @@ class AILayoutGenerator {
         positions = this.getScatteredLayout(frameCount);
     }
 
+    // Create dramatic size variations
+    const sizes = this.createFocusLayout(frameCount);
+
     const frames = positions.map((position, i) => ({
       id: `frame${i + 1}`,
       rotation: this.getRandomRotation(),
       position,
-      size: this.getVariedSize()
+      size: sizes[i]
     }));
 
-    // Generate complementary decorative elements
-    const decorativeElements = Array.from({ length: 4 + Math.floor(Math.random() * 4) }, () => ({
+    // More decorative elements for richer layouts
+    const decorativeCount = Math.floor(frameCount * 0.6) + 3; // More decorations
+    const decorativeElements = Array.from({ length: decorativeCount }, () => ({
       type: this.getRandomDecorativeType(),
       position: this.getRandomPosition(),
       rotation: Math.random() * 60 - 30,
       size: 'small' as const
     }));
 
+    console.log(`✨ Created ${layoutStyle} layout with ${frames.length} frames and ${decorativeElements.length} decorations`);
+    
     return { frames, decorativeElements };
   }
 
