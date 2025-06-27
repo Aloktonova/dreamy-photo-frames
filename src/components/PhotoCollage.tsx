@@ -23,6 +23,60 @@ const PhotoCollage = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
+  // Get themed collage background
+  const getCollageBackground = () => {
+    switch (currentTheme.id) {
+      case 'minimalist':
+        return {
+          background: 'linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%)',
+          backgroundImage: 'none'
+        };
+      case 'scrapbook':
+        return {
+          background: 'linear-gradient(135deg, #FFF8E7 0%, #FFE5B4 100%)',
+          backgroundImage: `
+            radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 177, 153, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.05) 0%, transparent 50%)
+          `
+        };
+      case 'retro':
+        return {
+          background: 'linear-gradient(135deg, #F4E4BC 0%, #E6D7B7 100%)',
+          backgroundImage: `
+            repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 2px,
+              rgba(139, 69, 19, 0.03) 2px,
+              rgba(139, 69, 19, 0.03) 4px
+            )
+          `
+        };
+      case 'romantic':
+        return {
+          background: 'linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%)',
+          backgroundImage: `
+            radial-gradient(circle at 25% 25%, rgba(255, 182, 193, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(248, 187, 217, 0.1) 0%, transparent 50%)
+          `
+        };
+      case 'travel':
+        return {
+          background: 'linear-gradient(135deg, #E8F4FD 0%, #D1E7DD 100%)',
+          backgroundImage: `
+            radial-gradient(circle at 30% 70%, rgba(70, 130, 180, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 70% 30%, rgba(32, 178, 170, 0.08) 0%, transparent 50%)
+          `
+        };
+      default:
+        return {
+          background: currentTheme.colors.cardBackground,
+          backgroundImage: 'none'
+        };
+    }
+  };
+
   const generateNewLayout = () => {
     console.log('Generating new AI layout...');
     const newLayout = aiLayoutGenerator.generateCollageLayout();
@@ -174,13 +228,13 @@ const PhotoCollage = () => {
         </div>
       </div>
 
-      {/* Main Collage Area */}
+      {/* Main Collage Area with Themed Background */}
       <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-16">
         <div 
-          className="relative rounded-3xl p-6 sm:p-12 shadow-2xl" 
+          className="relative rounded-3xl p-6 sm:p-12 shadow-2xl transition-all duration-500" 
           style={{ 
             height: '600px',
-            background: currentTheme.colors.cardBackground,
+            ...getCollageBackground(),
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
           }}
         >
