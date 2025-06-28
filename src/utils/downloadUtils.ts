@@ -23,18 +23,40 @@ export const downloadCollageAsImage = async (
       throw new Error('Collage element not found');
     }
 
-    // Configure html2canvas options for better quality
+    // Add extra padding to ensure frames aren't cut off
+    const padding = 50;
+    const originalStyle = element.style.cssText;
+    
+    // Temporarily adjust element for better capture
+    element.style.padding = `${padding}px`;
+    element.style.margin = '0';
+    element.style.transform = 'none';
+
+    // Configure html2canvas options for better quality and proper background handling
     const canvas = await html2canvas(element, {
-      backgroundColor: null,
+      backgroundColor: null, // Preserve transparency for PNG
       scale: 2, // Higher resolution
       useCORS: true,
       allowTaint: false,
       logging: false,
       width: element.offsetWidth,
-      height: element.offsetHeight
+      height: element.offsetHeight,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: element.offsetWidth,
+      windowHeight: element.offsetHeight,
+      ignoreElements: (el) => {
+        // Ignore overlay elements that shouldn't be in the download
+        return el.classList.contains('download-ignore') || 
+               el.tagName === 'BUTTON' ||
+               el.classList.contains('opacity-0');
+      }
     });
 
-    // Convert to blob
+    // Restore original styles
+    element.style.cssText = originalStyle;
+
+    // Convert to blob with proper format handling
     return new Promise<void>((resolve, reject) => {
       canvas.toBlob((blob) => {
         if (!blob) {
@@ -56,7 +78,7 @@ export const downloadCollageAsImage = async (
         // Cleanup
         URL.revokeObjectURL(url);
         resolve();
-      }, `image/${format}`, quality);
+      }, `image/${format}`, format === 'jpeg' ? quality : undefined);
     });
   } catch (error) {
     console.error('Download failed:', error);

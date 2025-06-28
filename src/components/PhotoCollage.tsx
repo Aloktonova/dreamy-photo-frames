@@ -6,7 +6,7 @@ import FrameCustomizationPanel from './FrameCustomizationPanel';
 import BackgroundCustomizationPanel from './BackgroundCustomizationPanel';
 import InteractiveStickerPanel from './InteractiveStickerPanel';
 import DownloadModal from './DownloadModal';
-import { Download, RefreshCw, Sparkles, Heart, Settings, Image, Undo, Redo } from 'lucide-react';
+import { Download, RefreshCw, Sparkles, Heart, Settings, Image, Undo, Redo, Edit3 } from 'lucide-react';
 import { themes } from '@/data/themes';
 import { Theme } from '@/types/styles';
 import { aiLayoutGenerator } from './AILayoutGenerator';
@@ -25,6 +25,7 @@ const PhotoCollage = () => {
   const [history, setHistory] = useState<any[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   // Get themed collage background
   const getCollageBackground = () => {
@@ -127,7 +128,7 @@ const PhotoCollage = () => {
       setPhotos(nextState.photos);
       setLayout(nextState.layout);
       setCustomBackground(nextState.customBackground);
-      setCustomStickers(nextState.customStickers);
+      setCustomStickers(nextState.customStickers);  
       setCurrentTheme(nextState.currentTheme);
       setHistoryIndex(historyIndex + 1);
     }
@@ -156,6 +157,36 @@ const PhotoCollage = () => {
     setPhotos(prev => ({
       ...prev,
       [frameId]: { ...prev[frameId], caption }
+    }));
+    saveToHistory();
+  };
+
+  const handleFramePositionChange = (frameId: string, position: { top: string; left: string }) => {
+    setLayout(prev => ({
+      ...prev,
+      frames: prev.frames.map(frame => 
+        frame.id === frameId ? { ...frame, position } : frame
+      )
+    }));
+    saveToHistory();
+  };
+
+  const handleFrameRotationChange = (frameId: string, rotation: number) => {
+    setLayout(prev => ({
+      ...prev,
+      frames: prev.frames.map(frame => 
+        frame.id === frameId ? { ...frame, rotation } : frame
+      )
+    }));
+    saveToHistory();
+  };
+
+  const handleFrameSizeChange = (frameId: string, size: 'small' | 'medium' | 'large') => {
+    setLayout(prev => ({
+      ...prev,
+      frames: prev.frames.map(frame => 
+        frame.id === frameId ? { ...frame, size } : frame
+      )
     }));
     saveToHistory();
   };
@@ -194,7 +225,7 @@ const PhotoCollage = () => {
           </div>
           
           {/* Action Buttons Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 max-w-5xl mx-auto">
             {/* Undo/Redo */}
             <button 
               onClick={undo}
@@ -212,6 +243,17 @@ const PhotoCollage = () => {
             >
               <Redo size={20} className="text-gray-600 group-hover:text-blue-500 transition-colors" />
               <span className="text-xs font-medium text-gray-600">Redo</span>
+            </button>
+
+            {/* Edit Mode Toggle */}
+            <button 
+              onClick={() => setEditMode(!editMode)}
+              className={`flex flex-col items-center gap-2 p-4 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group ${
+                editMode ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20' : 'bg-white/90'
+              }`}
+            >
+              <Edit3 size={20} className={`${editMode ? 'text-blue-500' : 'text-gray-600'} group-hover:scale-110 transition-transform`} />
+              <span className="text-xs font-medium text-gray-600">Edit Frames</span>
             </button>
 
             {/* Background */}
@@ -323,30 +365,21 @@ const PhotoCollage = () => {
 
           {/* Photo frames */}
           {layout.frames.map((frame) => (
-            <div key={frame.id} className="group">
-              <PhotoFrame
-                id={frame.id}
-                rotation={frame.rotation}
-                position={frame.position}
-                size={frame.size}
-                caption={photos[frame.id]?.caption || ""}
-                onImageUpload={handleImageUpload}
-                onCaptionChange={handleCaptionChange}
-                theme={currentTheme}
-              />
-              {/* Frame customization button */}
-              <button
-                onClick={() => handleFrameCustomization(frame.id)}
-                className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded-full p-2 shadow-lg hover:shadow-xl z-30"
-                style={{
-                  top: frame.position.top,
-                  left: `calc(${frame.position.left} + 120px)`,
-                  transform: `rotate(${frame.rotation}deg)`
-                }}
-              >
-                <Settings size={14} className="text-gray-600" />
-              </button>
-            </div>
+            <PhotoFrame
+              key={frame.id}
+              id={frame.id}
+              rotation={frame.rotation}
+              position={frame.position}
+              size={frame.size}
+              caption={photos[frame.id]?.caption || ""}
+              onImageUpload={handleImageUpload}
+              onCaptionChange={handleCaptionChange}
+              onPositionChange={handleFramePositionChange}
+              onRotationChange={handleFrameRotationChange}
+              onSizeChange={handleFrameSizeChange}
+              theme={currentTheme}
+              editMode={editMode}
+            />
           ))}
 
           {/* Subtle corner decorations */}
@@ -367,7 +400,7 @@ const PhotoCollage = () => {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-              <span>Hover for customization</span>
+              <span>Use Edit Frames mode to adjust position</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
