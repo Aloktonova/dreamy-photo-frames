@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PhotoFrame from './PhotoFrame';
 import DecorativeElement from './DecorativeElement';
-import StyleManager from './StyleManager';
+import CollageToolbar from './CollageToolbar';
 import FrameCustomizationPanel from './FrameCustomizationPanel';
 import BackgroundCustomizationPanel from './BackgroundCustomizationPanel';
 import InteractiveStickerPanel from './InteractiveStickerPanel';
@@ -9,12 +9,14 @@ import DownloadModal from './DownloadModal';
 import { Download, RefreshCw, Sparkles, Heart, Settings, Image, Undo, Redo, Edit3 } from 'lucide-react';
 import { themes } from '@/data/themes';
 import { Theme } from '@/types/styles';
+import { LayoutTemplate } from '@/data/layoutTemplates';
 import { aiLayoutGenerator } from './AILayoutGenerator';
 import TutorialOverlay from './TutorialOverlay';
 
 const PhotoCollage = () => {
   const [photos, setPhotos] = useState<{[key: string]: { file?: File, caption: string }}>({});
   const [currentTheme, setCurrentTheme] = useState<Theme>(themes[1]);
+  const [currentLayout, setCurrentLayout] = useState<LayoutTemplate | undefined>();
   const [layout, setLayout] = useState(() => aiLayoutGenerator.generateCollageLayout());
   const [customBackground, setCustomBackground] = useState<string>('linear-gradient(135deg, #FFF8E7 0%, #FFE5B4 100%)');
   const [frameCustomizationOpen, setFrameCustomizationOpen] = useState(false);
@@ -26,6 +28,8 @@ const PhotoCollage = () => {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [spacing, setSpacing] = useState(8);
+  const [borderRadius, setBorderRadius] = useState(12);
 
   // Get themed collage background
   const getCollageBackground = () => {
@@ -81,11 +85,37 @@ const PhotoCollage = () => {
     }
   };
 
+  const applyLayoutTemplate = (layoutTemplate: LayoutTemplate) => {
+    console.log('Applying layout template:', layoutTemplate.name);
+    setCurrentLayout(layoutTemplate);
+    
+    // Convert layout template cells to frames
+    const newFrames = layoutTemplate.cells.map((cell, index) => ({
+      id: cell.id,
+      position: {
+        top: `${(cell.y * 40) + 10}%`,
+        left: `${(cell.x * 40) + 10}%`
+      },
+      rotation: 0,
+      size: cell.w > 1.5 ? 'large' : cell.w > 0.8 ? 'medium' : 'small' as 'small' | 'medium' | 'large'
+    }));
+
+    setLayout(prev => ({
+      ...prev,
+      frames: newFrames
+    }));
+    
+    // Clear photos to start fresh with new layout
+    setPhotos({});
+    saveToHistory();
+  };
+
   const generateNewLayout = () => {
     console.log('Generating new AI layout...');
     const newLayout = aiLayoutGenerator.generateCollageLayout();
     setLayout(newLayout);
     setPhotos({});
+    setCurrentLayout(undefined); // Clear template when using AI
     saveToHistory();
   };
 
@@ -205,28 +235,29 @@ const PhotoCollage = () => {
           {/* Hero Section */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 text-sm text-gray-700 mb-4">
-              ✨ New AI-Powered Features Available
+              ✨ New Layout Templates Available
             </div>
             <h1 className="text-4xl sm:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
               Memories Into Magic
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Create stunning photo collages with AI-powered layouts, beautiful frames, and professional styling
+              Create stunning photo collages with professional layouts, beautiful frames, and AI-powered styling
             </p>
           </div>
           
-          {/* Modern Toolbar with Glass Effect */}
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/50 mb-8">
-            <StyleManager
-              currentTheme={currentTheme}
-              onThemeChange={handleThemeChange}
-              onGenerateLayout={generateNewLayout}
-            />
-          </div>
+          {/* New Tabbed Toolbar */}
+          <CollageToolbar
+            currentTheme={currentTheme}
+            currentLayout={currentLayout}
+            onThemeChange={handleThemeChange}
+            onLayoutChange={applyLayoutTemplate}
+            onGenerateLayout={generateNewLayout}
+            onOpenBackgroundPanel={() => setBackgroundCustomizationOpen(true)}
+            onOpenStickerPanel={() => setStickerPanelOpen(true)}
+          />
           
           {/* Action Buttons Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 max-w-5xl mx-auto">
-            {/* Undo/Redo */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 max-w-4xl mx-auto">
             <button 
               onClick={undo}
               disabled={historyIndex <= 0}
@@ -245,7 +276,6 @@ const PhotoCollage = () => {
               <span className="text-xs font-medium text-gray-600">Redo</span>
             </button>
 
-            {/* Edit Mode Toggle */}
             <button 
               onClick={() => setEditMode(!editMode)}
               className={`flex flex-col items-center gap-2 p-4 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group ${
@@ -256,40 +286,19 @@ const PhotoCollage = () => {
               <span className="text-xs font-medium text-gray-600">Edit Frames</span>
             </button>
 
-            {/* Background */}
-            <button 
-              onClick={() => setBackgroundCustomizationOpen(true)}
-              className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group"
-            >
-              <Image size={20} className="text-blue-500 group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-medium text-gray-600">Background</span>
-            </button>
-
-            {/* Stickers */}
-            <button 
-              onClick={() => setStickerPanelOpen(true)}
-              className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group"
-            >
-              <Sparkles size={20} className="text-purple-500 group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-medium text-gray-600">Stickers</span>
-            </button>
-
-            {/* New Layout */}
             <button 
               onClick={generateNewLayout}
               className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group"
             >
               <RefreshCw size={20} className="text-green-500 group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-medium text-gray-600">New Layout</span>
+              <span className="text-xs font-medium text-gray-600">AI Layout</span>
             </button>
 
-            {/* Settings */}
             <button className="flex flex-col items-center gap-2 p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group">
               <Settings size={20} className="text-gray-600 group-hover:text-gray-800 transition-colors" />
               <span className="text-xs font-medium text-gray-600">Settings</span>
             </button>
 
-            {/* Download - Enhanced */}
             <button 
               onClick={() => setDownloadModalOpen(true)}
               className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group"
@@ -309,10 +318,10 @@ const PhotoCollage = () => {
           style={{ 
             minHeight: '600px',
             ...getCollageBackground(),
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            gap: `${spacing}px`
           }}
         >
-          {/* Central decorative heart */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
             <Heart 
               size={48} 
@@ -321,7 +330,6 @@ const PhotoCollage = () => {
             />
           </div>
 
-          {/* Decorative elements */}
           {layout.decorativeElements.map((element, index) => (
             <DecorativeElement
               key={`decoration-${index}`}
@@ -333,7 +341,6 @@ const PhotoCollage = () => {
             />
           ))}
 
-          {/* Custom Stickers */}
           {customStickers.map((sticker) => {
             const IconComponent = sticker.icon;
             return (
@@ -382,7 +389,6 @@ const PhotoCollage = () => {
             />
           ))}
 
-          {/* Subtle corner decorations */}
           <div className="absolute top-4 left-4 w-3 h-3 bg-pink-200 rounded-full opacity-50 animate-pulse"></div>
           <div className="absolute top-4 right-4 w-2 h-2 bg-yellow-200 rounded-full opacity-50 animate-pulse" style={{ animationDelay: '1s' }}></div>
           <div className="absolute bottom-4 left-4 w-2 h-2 bg-blue-200 rounded-full opacity-50 animate-pulse" style={{ animationDelay: '2s' }}></div>
@@ -390,27 +396,25 @@ const PhotoCollage = () => {
         </div>
       </div>
 
-      {/* Modern Tips Section */}
       <div className="max-w-4xl mx-auto px-4 sm:px-8 pb-16">
         <div className="bg-gradient-to-r from-white/60 to-white/40 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/50">
           <div className="flex items-center justify-center gap-4 flex-wrap text-sm text-gray-700">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span>Click frames to add photos</span>
+              <span>Choose layouts from Layout tab</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-              <span>Use Edit Frames mode to adjust position</span>
+              <span>Use Edit mode to adjust frames</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-              <span>Try AI Layout for new arrangements</span>
+              <span>Try AI Tools for smart layouts</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Modals */}
       <FrameCustomizationPanel
         selectedFrame={selectedFrame}
         onFrameStyleChange={(frameId, style) => {
