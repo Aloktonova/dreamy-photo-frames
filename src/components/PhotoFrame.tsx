@@ -1,7 +1,11 @@
-
 import React, { useState } from 'react';
-import { Upload, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Theme } from '@/types/styles';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { useLoadingState } from '@/hooks/useLoadingState';
+import { optimizeImage } from '@/utils/imageOptimization';
+import EnhancedFileUpload from './EnhancedFileUpload';
+import HelpTooltip from './HelpTooltip';
 
 interface PhotoFrameProps {
   id: string;
@@ -31,6 +35,9 @@ const PhotoFrame = ({
   const [isEditing, setIsEditing] = useState(false);
   const [tempCaption, setTempCaption] = useState(caption);
   const [imageLoaded, setImageLoaded] = useState(false);
+  
+  const { handleError } = useErrorHandler();
+  const { loadingState, startLoading, stopLoading } = useLoadingState();
 
   const sizeClasses = {
     small: 'w-28 h-36',
@@ -98,19 +105,31 @@ const PhotoFrame = ({
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImageSrc(e.target?.result as string);
-        setImageLoaded(false);
-      };
-      reader.readAsDataURL(file);
+  const handleFileSelect = async (file: File) => {
+    try {
+      startLoading('Optimizing image...');
+      
+      // Optimize image for better performance
+      const optimizedImageSrc = await optimizeImage(file, {
+        maxWidth: size === 'large' ? 800 : size === 'medium' ? 600 : 400,
+        maxHeight: size === 'large' ? 800 : size === 'medium' ? 600 : 400,
+        quality: 0.85
+      });
+      
+      setImageSrc(optimizedImageSrc);
+      setImageLoaded(false);
       
       if (onImageUpload) {
         onImageUpload(id, file);
       }
+    } catch (error) {
+      handleError({
+        type: 'file_upload',
+        message: 'Failed to process image',
+        details: 'There was an error optimizing your image. Please try again.'
+      });
+    } finally {
+      stopLoading();
     }
   };
 
@@ -193,23 +212,16 @@ const PhotoFrame = ({
               </button>
             </>
           ) : (
-            <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer hover:bg-gray-100 transition-colors duration-300">
-              <Upload size={size === 'small' ? 14 : size === 'medium' ? 18 : 22} className="text-gray-400 mb-1" />
-              <span className={`${size === 'small' ? 'text-xs' : 'text-sm'} text-gray-500 text-center px-1 leading-tight`}>
-                Add photo
-              </span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </label>
+            <EnhancedFileUpload
+              onFileSelect={handleFileSelect}
+              className="w-full h-full"
+              maxSize={10}
+            />
           )}
         </div>
 
-        {/* Caption area with theme-appropriate fonts */}
-        <div className="px-1 flex items-center justify-center min-h-[20px]">
+        {/* Enhanced caption area with help tooltip */}
+        <div className="px-1 flex items-center justify-center min-h-[20px] gap-1">
           {isEditing ? (
             <input
               type="text"
@@ -221,17 +233,37 @@ const PhotoFrame = ({
               style={{ color: theme?.colors.primary || '#374151' }}
               placeholder="Add caption..."
               autoFocus
+              maxLength={50}
             />
           ) : (
-            <p 
-              onClick={() => setIsEditing(true)}
-              className={`w-full text-xs ${theme?.fonts.caption || 'font-handwritten'} text-center cursor-text hover:bg-gray-50 rounded px-1 py-1 transition-colors duration-200 leading-tight ${!caption ? 'text-gray-400' : ''}`}
-              style={{ color: caption ? (theme?.colors.primary || '#374151') : '#9CA3AF' }}
-            >
-              {caption || "Add caption..."}
-            </p>
+            <div className="flex items-center gap-1 w-full">
+              <p 
+                onClick={() => setIsEditing(true)}
+                className={`flex-1 text-xs ${theme?.fonts.caption || 'font-handwritten'} text-center cursor-text hover:bg-gray-50 rounded px-1 py-1 transition-colors duration-200 leading-tight ${!caption ? 'text-gray-400' : ''}`}
+                style={{ color: caption ? (theme?.colors.primary || '#374151') : '#9CA3AF' }}
+              >
+                {caption || "Add caption..."}
+              </p>
+              {!caption && (
+                <HelpTooltip 
+                  content="Click here to add a caption to your photo. Keep it short and sweet!"
+                  position="top"
+                  size="sm"
+                />
+              )}
+            </div>
           )}
         </div>
+
+        {/* Loading overlay */}
+        {loadingState.isLoading && (
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-sm flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+              <p className="text-xs text-gray-600">{loadingState.message}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

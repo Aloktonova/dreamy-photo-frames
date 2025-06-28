@@ -9,6 +9,7 @@ import { Download, RefreshCw, Sparkles, Heart, Settings, Image, Undo, Redo } fro
 import { themes } from '@/data/themes';
 import { Theme } from '@/types/styles';
 import { aiLayoutGenerator } from './AILayoutGenerator';
+import TutorialOverlay from './TutorialOverlay';
 
 const PhotoCollage = () => {
   const [photos, setPhotos] = useState<{[key: string]: { file?: File, caption: string }}>({});
@@ -162,6 +163,9 @@ const PhotoCollage = () => {
       className="min-h-screen transition-all duration-500"
       style={{ background: customBackground }}
     >
+      {/* Tutorial Overlay */}
+      <TutorialOverlay />
+
       {/* Enhanced Header */}
       <div className="relative overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-12 pb-6 sm:pb-8">
