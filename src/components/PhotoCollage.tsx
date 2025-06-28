@@ -5,6 +5,7 @@ import StyleManager from './StyleManager';
 import FrameCustomizationPanel from './FrameCustomizationPanel';
 import BackgroundCustomizationPanel from './BackgroundCustomizationPanel';
 import InteractiveStickerPanel from './InteractiveStickerPanel';
+import DownloadModal from './DownloadModal';
 import { Download, RefreshCw, Sparkles, Heart, Settings, Image, Undo, Redo } from 'lucide-react';
 import { themes } from '@/data/themes';
 import { Theme } from '@/types/styles';
@@ -23,6 +24,7 @@ const PhotoCollage = () => {
   const [customStickers, setCustomStickers] = useState<any[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [downloadModalOpen, setDownloadModalOpen] = useState(false);
 
   // Get themed collage background
   const getCollageBackground = () => {
@@ -166,80 +168,106 @@ const PhotoCollage = () => {
       {/* Tutorial Overlay */}
       <TutorialOverlay />
 
-      {/* Enhanced Header */}
+      {/* Modern Header with Glass Morphism */}
       <div className="relative overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-12 pb-6 sm:pb-8">
-          <div className="text-center mb-6 sm:mb-8">
-            <h1 className={`text-3xl sm:text-5xl ${currentTheme.fonts.heading} font-bold mb-3`} style={{ color: currentTheme.colors.primary }}>
-              ✨ Turn Memories Into Magic
+          {/* Hero Section */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 text-sm text-gray-700 mb-4">
+              ✨ New AI-Powered Features Available
+            </div>
+            <h1 className="text-4xl sm:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+              Memories Into Magic
             </h1>
-            <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto">
-              Dreamy Frames for Every Story — Create beautiful photo collages with authentic polaroid style
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Create stunning photo collages with AI-powered layouts, beautiful frames, and professional styling
             </p>
           </div>
           
-          {/* Modern Sticky Toolbar */}
-          <StyleManager
-            currentTheme={currentTheme}
-            onThemeChange={handleThemeChange}
-            onGenerateLayout={generateNewLayout}
-          />
+          {/* Modern Toolbar with Glass Effect */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/50 mb-8">
+            <StyleManager
+              currentTheme={currentTheme}
+              onThemeChange={handleThemeChange}
+              onGenerateLayout={generateNewLayout}
+            />
+          </div>
           
-          {/* Secondary Action Buttons */}
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mt-4 mb-6 sm:mb-8">
+          {/* Action Buttons Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 max-w-4xl mx-auto">
             {/* Undo/Redo */}
             <button 
               onClick={undo}
               disabled={historyIndex <= 0}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="flex flex-col items-center gap-2 p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 disabled:opacity-50 disabled:cursor-not-allowed group"
             >
-              <Undo size={14} />
-              <span className="hidden sm:inline">Undo</span>
+              <Undo size={20} className="text-gray-600 group-hover:text-blue-500 transition-colors" />
+              <span className="text-xs font-medium text-gray-600">Undo</span>
             </button>
             
             <button 
               onClick={redo}
               disabled={historyIndex >= history.length - 1}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="flex flex-col items-center gap-2 p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 disabled:opacity-50 disabled:cursor-not-allowed group"
             >
-              <Redo size={14} />
-              <span className="hidden sm:inline">Redo</span>
+              <Redo size={20} className="text-gray-600 group-hover:text-blue-500 transition-colors" />
+              <span className="text-xs font-medium text-gray-600">Redo</span>
             </button>
 
-            {/* Background Customization */}
+            {/* Background */}
             <button 
               onClick={() => setBackgroundCustomizationOpen(true)}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 text-sm"
+              className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group"
             >
-              <Image size={14} />
-              <span className="hidden sm:inline">Background</span>
+              <Image size={20} className="text-blue-500 group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-medium text-gray-600">Background</span>
             </button>
 
             {/* Stickers */}
             <button 
               onClick={() => setStickerPanelOpen(true)}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 text-sm"
+              className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group"
             >
-              <Sparkles size={14} />
-              <span className="hidden sm:inline">Stickers</span>
+              <Sparkles size={20} className="text-purple-500 group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-medium text-gray-600">Stickers</span>
             </button>
 
-            <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-white/50 text-sm">
-              <Download size={14} />
-              <span className="hidden sm:inline">Download</span>
+            {/* New Layout */}
+            <button 
+              onClick={generateNewLayout}
+              className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group"
+            >
+              <RefreshCw size={20} className="text-green-500 group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-medium text-gray-600">New Layout</span>
+            </button>
+
+            {/* Settings */}
+            <button className="flex flex-col items-center gap-2 p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group">
+              <Settings size={20} className="text-gray-600 group-hover:text-gray-800 transition-colors" />
+              <span className="text-xs font-medium text-gray-600">Settings</span>
+            </button>
+
+            {/* Download - Enhanced */}
+            <button 
+              onClick={() => setDownloadModalOpen(true)}
+              className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-white/50 group"
+            >
+              <Download size={20} className="text-orange-500 group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-medium text-gray-600">Download</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Main Collage Area with Themed Background */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-16">
+      {/* Main Collage Area - Enhanced */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 pb-16">
         <div 
-          className="relative rounded-3xl p-6 sm:p-12 shadow-2xl transition-all duration-500" 
+          id="collage-canvas"
+          className="relative rounded-3xl p-8 sm:p-12 shadow-2xl transition-all duration-500 backdrop-blur-sm" 
           style={{ 
-            height: '600px',
+            minHeight: '600px',
             ...getCollageBackground(),
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1)'
           }}
         >
           {/* Central decorative heart */}
@@ -329,16 +357,27 @@ const PhotoCollage = () => {
         </div>
       </div>
 
-      {/* Enhanced Tips */}
+      {/* Modern Tips Section */}
       <div className="max-w-4xl mx-auto px-4 sm:px-8 pb-16">
-        <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 text-center shadow-lg border border-white/50">
-          <p className={`${currentTheme.fonts.caption} text-gray-700 text-sm sm:text-lg`}>
-            💡 Click frames to add photos • Hover over frames for customization • Try AI Layout for different arrangements • Add stickers for extra magic
-          </p>
+        <div className="bg-gradient-to-r from-white/60 to-white/40 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/50">
+          <div className="flex items-center justify-center gap-4 flex-wrap text-sm text-gray-700">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <span>Click frames to add photos</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+              <span>Hover for customization</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+              <span>Try AI Layout for new arrangements</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Modals */}
+      {/* Enhanced Modals */}
       <FrameCustomizationPanel
         selectedFrame={selectedFrame}
         onFrameStyleChange={(frameId, style) => {
@@ -363,6 +402,12 @@ const PhotoCollage = () => {
         onAddSticker={handleAddSticker}
         isOpen={stickerPanelOpen}
         onClose={() => setStickerPanelOpen(false)}
+      />
+
+      <DownloadModal
+        isOpen={downloadModalOpen}
+        onClose={() => setDownloadModalOpen(false)}
+        collageElementId="collage-canvas"
       />
     </div>
   );
