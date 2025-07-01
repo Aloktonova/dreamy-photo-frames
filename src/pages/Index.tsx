@@ -1,8 +1,8 @@
 
-import PhotoCollage from '@/components/PhotoCollage';
+import Home from '@/components/Home';
 
 const Index = () => {
-  return <PhotoCollage />;
+  return <Home />;
 };
 
 export default Index;
