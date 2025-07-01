@@ -14,7 +14,7 @@ import {
   Crown,
   LayoutGrid, 
   Ratio, 
-  Border, 
+  RectangleHorizontal, 
   Type, 
   Filter, 
   Sticker
@@ -141,7 +141,7 @@ const PhotoCollage = () => {
     {
       id: 'border',
       name: 'Border',
-      icon: Border,
+      icon: RectangleHorizontal,
       onClick: () => setFrameCustomizationOpen(true)
     },
     {
