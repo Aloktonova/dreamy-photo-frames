@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PhotoFrame from './PhotoFrame';
@@ -6,6 +5,8 @@ import DecorativeElement from './DecorativeElement';
 import FrameCustomizationPanel from './FrameCustomizationPanel';
 import BackgroundCustomizationPanel from './BackgroundCustomizationPanel';
 import InteractiveStickerPanel from './InteractiveStickerPanel';
+import FilterPanel from './FilterPanel';
+import BlenderPanel from './BlenderPanel';
 import DownloadModal from './DownloadModal';
 import { 
   ArrowLeft, 
@@ -17,7 +18,9 @@ import {
   RectangleHorizontal, 
   Type, 
   Filter, 
-  Sticker
+  Sticker,
+  Palette,
+  Blend
 } from 'lucide-react';
 import { themes } from '@/data/themes';
 import { Theme } from '@/types/styles';
@@ -37,6 +40,8 @@ const PhotoCollage = () => {
   const [layoutSelectorOpen, setLayoutSelectorOpen] = useState(false);
   const [frameCustomizationOpen, setFrameCustomizationOpen] = useState(false);
   const [backgroundCustomizationOpen, setBackgroundCustomizationOpen] = useState(false);
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  const [blenderPanelOpen, setBlenderPanelOpen] = useState(false);
   const [stickerPanelOpen, setStickerPanelOpen] = useState(false);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   
@@ -46,11 +51,13 @@ const PhotoCollage = () => {
   const [spacing, setSpacing] = useState(8);
   const [borderRadius, setBorderRadius] = useState(12);
   const [showHelp, setShowHelp] = useState(false);
+  const [blendMode, setBlendMode] = useState('normal');
+  const [blendOpacity, setBlendOpacity] = useState(100);
 
   // Get themed collage background
   const getCollageBackground = () => {
     return {
-      background: 'linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%)',
+      background: customBackground,
       backgroundImage: 'none'
     };
   };
@@ -124,8 +131,8 @@ const PhotoCollage = () => {
     setStickerPanelOpen(false);
   };
 
-  // Bottom toolbar tools
-  const tools = [
+  // Bottom toolbar tools arranged in 2 rows
+  const toolsRow1 = [
     {
       id: 'layout',
       name: 'Layout',
@@ -145,16 +152,31 @@ const PhotoCollage = () => {
       onClick: () => setFrameCustomizationOpen(true)
     },
     {
-      id: 'text',
-      name: 'Text',
-      icon: Type,
-      onClick: () => console.log('Text tool clicked')
+      id: 'bg',
+      name: 'BG',
+      icon: Palette,
+      onClick: () => setBackgroundCustomizationOpen(true)
+    }
+  ];
+
+  const toolsRow2 = [
+    {
+      id: 'blender',
+      name: 'Blender',
+      icon: Blend,
+      onClick: () => setBlenderPanelOpen(true)
     },
     {
       id: 'filter',
       name: 'Filter',
       icon: Filter,
-      onClick: () => setBackgroundCustomizationOpen(true)
+      onClick: () => setFilterPanelOpen(true)
+    },
+    {
+      id: 'text',
+      name: 'Text',
+      icon: Type,
+      onClick: () => console.log('Text tool clicked')
     },
     {
       id: 'sticker',
@@ -209,7 +231,7 @@ const PhotoCollage = () => {
       )}
 
       {/* Main Canvas Area */}
-      <div className="flex-1 p-4 pb-20 overflow-auto">
+      <div className="flex-1 p-4 pb-32 overflow-auto">
         <div className="max-w-4xl mx-auto">
           <div 
             id="collage-canvas"
@@ -217,7 +239,9 @@ const PhotoCollage = () => {
             style={{ 
               width: '600px',
               height: '600px',
-              ...getCollageBackground()
+              ...getCollageBackground(),
+              mixBlendMode: blendMode as any,
+              opacity: blendOpacity / 100
             }}
           >
             {/* Decorative elements */}
@@ -283,20 +307,38 @@ const PhotoCollage = () => {
         </div>
       </div>
 
-      {/* Bottom Toolbar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 shadow-lg">
-        <div className="max-w-md mx-auto">
-          <div className="grid grid-cols-6 gap-1">
-            {tools.map((tool) => {
+      {/* Bottom Toolbar - 2 Row Grid */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 py-4 shadow-lg">
+        <div className="max-w-lg mx-auto">
+          {/* Row 1 */}
+          <div className="grid grid-cols-4 gap-2 mb-3">
+            {toolsRow1.map((tool) => {
               const IconComponent = tool.icon;
               return (
                 <button
                   key={tool.id}
                   onClick={tool.onClick}
-                  className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex flex-col items-center gap-1 p-3 rounded-xl hover:bg-gray-100 transition-colors active:scale-95"
                 >
-                  <IconComponent size={20} className="text-gray-600" />
-                  <span className="text-xs text-gray-600 font-medium">{tool.name}</span>
+                  <IconComponent size={22} className="text-gray-700" />
+                  <span className="text-xs text-gray-700 font-medium">{tool.name}</span>
+                </button>
+              );
+            })}
+          </div>
+          
+          {/* Row 2 */}
+          <div className="grid grid-cols-4 gap-2">
+            {toolsRow2.map((tool) => {
+              const IconComponent = tool.icon;
+              return (
+                <button
+                  key={tool.id}
+                  onClick={tool.onClick}
+                  className="flex flex-col items-center gap-1 p-3 rounded-xl hover:bg-gray-100 transition-colors active:scale-95"
+                >
+                  <IconComponent size={22} className="text-gray-700" />
+                  <span className="text-xs text-gray-700 font-medium">{tool.name}</span>
                 </button>
               );
             })}
@@ -326,6 +368,23 @@ const PhotoCollage = () => {
         onBackgroundChange={(bg) => setCustomBackground(bg)}
         isOpen={backgroundCustomizationOpen}
         onClose={() => setBackgroundCustomizationOpen(false)}
+      />
+
+      <FilterPanel
+        isOpen={filterPanelOpen}
+        onClose={() => setFilterPanelOpen(false)}
+        onFilterApply={(filter) => {
+          console.log('Filter applied:', filter);
+        }}
+      />
+
+      <BlenderPanel
+        isOpen={blenderPanelOpen}
+        onClose={() => setBlenderPanelOpen(false)}
+        currentBlendMode={blendMode}
+        currentOpacity={blendOpacity}
+        onBlendModeChange={setBlendMode}
+        onOpacityChange={setBlendOpacity}
       />
 
       <InteractiveStickerPanel
