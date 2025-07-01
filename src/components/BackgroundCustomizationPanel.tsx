@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Image, Palette } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Image, Palette, Upload } from 'lucide-react';
 
 interface BackgroundOption {
   id: string;
@@ -33,6 +33,20 @@ const backgroundOptions: BackgroundOption[] = [
 ];
 
 const BackgroundCustomizationPanel = ({ currentBackground, onBackgroundChange, isOpen, onClose }: BackgroundCustomizationPanelProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result as string;
+        onBackgroundChange(`url(${imageUrl}) center/cover no-repeat`);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -54,38 +68,62 @@ const BackgroundCustomizationPanel = ({ currentBackground, onBackgroundChange, i
             </button>
           </div>
 
+          {/* Upload Custom Image */}
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <Upload size={16} />
+              Upload Background Image
+            </h3>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 text-gray-600 hover:text-blue-600"
+            >
+              <Upload size={20} />
+              <span>Click to upload image</span>
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+          </div>
+
           {/* Background Options */}
-          <div className="grid grid-cols-2 gap-3">
-            {backgroundOptions.map((option) => (
-              <button
-                key={option.id}
-                onClick={() => {
-                  onBackgroundChange(option.value);
-                  onClose();
-                }}
-                className={`relative h-24 rounded-xl border-2 transition-all overflow-hidden group ${
-                  currentBackground === option.value
-                    ? 'border-blue-500 scale-105 shadow-lg'
-                    : 'border-gray-200 hover:border-gray-300 hover:scale-102'
-                }`}
-                style={{ background: option.value }}
-              >
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">
-                    {option.name}
-                  </span>
-                </div>
-                <div className="absolute bottom-1 left-1 right-1">
-                  <div className="bg-white/90 backdrop-blur-sm rounded px-2 py-1">
-                    <span className="text-xs font-medium text-gray-800">{option.name}</span>
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Preset Backgrounds</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {backgroundOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => {
+                    onBackgroundChange(option.value);
+                  }}
+                  className={`relative h-24 rounded-xl border-2 transition-all overflow-hidden group ${
+                    currentBackground === option.value
+                      ? 'border-blue-500 scale-105 shadow-lg'
+                      : 'border-gray-200 hover:border-gray-300 hover:scale-102'
+                  }`}
+                  style={{ background: option.value }}
+                >
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white text-xs font-medium bg-black/50 px-2 py-1 rounded">
+                      {option.name}
+                    </span>
                   </div>
-                </div>
-              </button>
-            ))}
+                  <div className="absolute bottom-1 left-1 right-1">
+                    <div className="bg-white/90 backdrop-blur-sm rounded px-2 py-1">
+                      <span className="text-xs font-medium text-gray-800">{option.name}</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Custom Color Section */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-xl">
+          <div className="p-4 bg-gray-50 rounded-xl">
             <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
               <Palette size={16} />
               Custom Color
@@ -96,6 +134,22 @@ const BackgroundCustomizationPanel = ({ currentBackground, onBackgroundChange, i
               className="w-full h-12 rounded-lg border-2 border-gray-200 cursor-pointer"
               title="Choose custom background color"
             />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={onClose}
+              className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onClose}
+              className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+            >
+              Apply
+            </button>
           </div>
         </div>
       </div>

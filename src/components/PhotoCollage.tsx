@@ -53,12 +53,31 @@ const PhotoCollage = () => {
   const [showHelp, setShowHelp] = useState(false);
   const [blendMode, setBlendMode] = useState('normal');
   const [blendOpacity, setBlendOpacity] = useState(100);
+  const [collageFilters, setCollageFilters] = useState({
+    brightness: 100,
+    contrast: 100,
+    saturation: 100,
+    sepia: 0,
+    grayscale: 0,
+    blur: 0
+  });
 
   // Get themed collage background
   const getCollageBackground = () => {
     return {
       background: customBackground,
       backgroundImage: 'none'
+    };
+  };
+
+  const getCollageStyle = () => {
+    const filterString = `brightness(${collageFilters.brightness}%) contrast(${collageFilters.contrast}%) saturate(${collageFilters.saturation}%) sepia(${collageFilters.sepia}%) grayscale(${collageFilters.grayscale}%) blur(${collageFilters.blur}px)`;
+    
+    return {
+      ...getCollageBackground(),
+      mixBlendMode: blendMode as any,
+      opacity: blendOpacity / 100,
+      filter: filterString
     };
   };
 
@@ -239,9 +258,7 @@ const PhotoCollage = () => {
             style={{ 
               width: '600px',
               height: '600px',
-              ...getCollageBackground(),
-              mixBlendMode: blendMode as any,
-              opacity: blendOpacity / 100
+              ...getCollageStyle()
             }}
           >
             {/* Decorative elements */}
@@ -373,8 +390,8 @@ const PhotoCollage = () => {
       <FilterPanel
         isOpen={filterPanelOpen}
         onClose={() => setFilterPanelOpen(false)}
-        onFilterApply={(filter) => {
-          console.log('Filter applied:', filter);
+        onFilterApply={(filters) => {
+          setCollageFilters(filters);
         }}
       />
 
