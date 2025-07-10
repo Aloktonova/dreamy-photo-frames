@@ -12,6 +12,7 @@ export interface LayoutTemplate {
   name: string;
   cells: LayoutCell[];
   icon: string;
+  isPro?: boolean;
 }
 
 export const layoutTemplates: LayoutTemplate[] = [
@@ -121,6 +122,7 @@ export const layoutTemplates: LayoutTemplate[] = [
     id: 'hexagon',
     name: 'Hexagon',
     icon: '⬡',
+    isPro: true,
     cells: [
       { id: 'cell-1', x: 0.5, y: 0.1, w: 0.8, h: 0.4 },
       { id: 'cell-2', x: 0.1, y: 0.3, w: 0.6, h: 0.4 },
@@ -134,6 +136,7 @@ export const layoutTemplates: LayoutTemplate[] = [
     id: 'pyramid',
     name: 'Pyramid',
     icon: '△',
+    isPro: true,
     cells: [
       { id: 'cell-1', x: 0.75, y: 0, w: 0.5, h: 0.5 },
       { id: 'cell-2', x: 0.25, y: 0.4, w: 0.6, h: 0.6 },
@@ -148,12 +151,50 @@ export const layoutTemplates: LayoutTemplate[] = [
     id: 'artistic',
     name: 'Artistic',
     icon: '🎨',
+    isPro: true,
     cells: [
       { id: 'cell-1', x: 0.1, y: 0.1, w: 0.9, h: 0.5 },
       { id: 'cell-2', x: 1.1, y: 0.0, w: 0.4, h: 0.7 },
       { id: 'cell-3', x: 0.0, y: 0.7, w: 0.5, h: 0.8 },
       { id: 'cell-4', x: 0.6, y: 0.6, w: 0.5, h: 0.4 },
       { id: 'cell-5', x: 1.2, y: 0.8, w: 0.6, h: 0.7 }
+    ]
+  },
+  // Additional clean grid layouts
+  {
+    id: 'grid4',
+    name: '4 Grid',
+    icon: '▦',
+    cells: [
+      { id: 'cell-1', x: 0, y: 0, w: 1, h: 1 },
+      { id: 'cell-2', x: 1, y: 0, w: 1, h: 1 },
+      { id: 'cell-3', x: 0, y: 1, w: 1, h: 1 },
+      { id: 'cell-4', x: 1, y: 1, w: 1, h: 1 }
+    ]
+  },
+  {
+    id: 'grid5',
+    name: '5 Grid',
+    icon: '▣',
+    cells: [
+      { id: 'cell-1', x: 0, y: 0, w: 2, h: 1 },
+      { id: 'cell-2', x: 0, y: 1, w: 1, h: 1 },
+      { id: 'cell-3', x: 1, y: 1, w: 1, h: 1 },
+      { id: 'cell-4', x: 0, y: 2, w: 1, h: 1 },
+      { id: 'cell-5', x: 1, y: 2, w: 1, h: 1 }
+    ]
+  },
+  {
+    id: 'grid6',
+    name: '6 Grid',
+    icon: '⬚',
+    cells: [
+      { id: 'cell-1', x: 0, y: 0, w: 1, h: 1 },
+      { id: 'cell-2', x: 1, y: 0, w: 1, h: 1 },
+      { id: 'cell-3', x: 2, y: 0, w: 1, h: 1 },
+      { id: 'cell-4', x: 0, y: 1, w: 1, h: 1 },
+      { id: 'cell-5', x: 1, y: 1, w: 1, h: 1 },
+      { id: 'cell-6', x: 2, y: 1, w: 1, h: 1 }
     ]
   }
 ];

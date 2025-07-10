@@ -50,6 +50,9 @@ const PhotoCollage = () => {
   const [customStickers, setCustomStickers] = useState<any[]>([]);
   const [spacing, setSpacing] = useState(8);
   const [borderRadius, setBorderRadius] = useState(12);
+  const [borderThickness, setBorderThickness] = useState(2);
+  const [borderColor, setBorderColor] = useState('#FFFFFF');
+  const [borderStyle, setBorderStyle] = useState('solid');
   const [showHelp, setShowHelp] = useState(false);
   const [blendMode, setBlendMode] = useState('normal');
   const [blendOpacity, setBlendOpacity] = useState(100);
@@ -324,38 +327,23 @@ const PhotoCollage = () => {
         </div>
       </div>
 
-      {/* Bottom Toolbar - 2 Row Grid */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 py-4 shadow-lg">
-        <div className="max-w-lg mx-auto">
-          {/* Row 1 */}
-          <div className="grid grid-cols-4 gap-2 mb-3">
-            {toolsRow1.map((tool) => {
+      {/* Bottom Toolbar - Responsive Grid */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 px-3 py-3 shadow-lg">
+        <div className="max-w-2xl mx-auto">
+          {/* Single Row for Mobile, Two Rows for Desktop */}
+          <div className="grid grid-cols-8 sm:grid-cols-8 gap-1 sm:gap-2">
+            {[...toolsRow1, ...toolsRow2].map((tool, index) => {
               const IconComponent = tool.icon;
               return (
                 <button
                   key={tool.id}
                   onClick={tool.onClick}
-                  className="flex flex-col items-center gap-1 p-3 rounded-xl hover:bg-gray-100 transition-colors active:scale-95"
+                  className="flex flex-col items-center gap-1 p-2 sm:p-3 rounded-lg hover:bg-gray-100 transition-all active:scale-95 min-h-[60px] sm:min-h-[70px]"
                 >
-                  <IconComponent size={22} className="text-gray-700" />
-                  <span className="text-xs text-gray-700 font-medium">{tool.name}</span>
-                </button>
-              );
-            })}
-          </div>
-          
-          {/* Row 2 */}
-          <div className="grid grid-cols-4 gap-2">
-            {toolsRow2.map((tool) => {
-              const IconComponent = tool.icon;
-              return (
-                <button
-                  key={tool.id}
-                  onClick={tool.onClick}
-                  className="flex flex-col items-center gap-1 p-3 rounded-xl hover:bg-gray-100 transition-colors active:scale-95"
-                >
-                  <IconComponent size={22} className="text-gray-700" />
-                  <span className="text-xs text-gray-700 font-medium">{tool.name}</span>
+                  <IconComponent size={18} className="text-gray-700 sm:size-[20px]" />
+                  <span className="text-[10px] sm:text-xs text-gray-700 font-medium leading-tight text-center">
+                    {tool.name}
+                  </span>
                 </button>
               );
             })}
@@ -372,10 +360,14 @@ const PhotoCollage = () => {
       />
 
       <FrameCustomizationPanel
-        selectedFrame={selectedFrame}
-        onFrameStyleChange={(frameId, style) => {
-          console.log('Frame style changed:', frameId, style);
-        }}
+        borderThickness={borderThickness}
+        borderRadius={borderRadius}
+        borderColor={borderColor}
+        borderStyle={borderStyle}
+        onBorderThicknessChange={setBorderThickness}
+        onBorderRadiusChange={setBorderRadius}
+        onBorderColorChange={setBorderColor}
+        onBorderStyleChange={setBorderStyle}
         isOpen={frameCustomizationOpen}
         onClose={() => setFrameCustomizationOpen(false)}
       />

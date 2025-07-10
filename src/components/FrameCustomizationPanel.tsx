@@ -1,19 +1,24 @@
 
 import React from 'react';
 import { Palette, Square, Circle, Star, Sparkles } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
 
 interface FrameStyle {
-  id: string;
-  name: string;
-  color: string;
-  thickness: 'thin' | 'medium' | 'thick';
-  style: 'classic' | 'ornate' | 'minimalist' | 'shadow';
-  corners: 'square' | 'rounded' | 'torn';
+  borderThickness: number;
+  borderRadius: number;
+  borderColor: string;
+  borderStyle: 'solid' | 'dashed' | 'dotted' | 'double';
 }
 
 interface FrameCustomizationPanelProps {
-  selectedFrame?: string;
-  onFrameStyleChange: (frameId: string, style: FrameStyle) => void;
+  borderThickness: number;
+  borderRadius: number;
+  borderColor: string;
+  borderStyle: string;
+  onBorderThicknessChange: (value: number) => void;
+  onBorderRadiusChange: (value: number) => void;
+  onBorderColorChange: (color: string) => void;
+  onBorderStyleChange: (style: string) => void;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -29,25 +34,19 @@ const frameColors = [
   { name: 'Charcoal', color: '#36454F' }
 ];
 
-const FrameCustomizationPanel = ({ selectedFrame, onFrameStyleChange, isOpen, onClose }: FrameCustomizationPanelProps) => {
-  const [currentStyle, setCurrentStyle] = React.useState<FrameStyle>({
-    id: selectedFrame || '',
-    name: 'Custom',
-    color: '#FFFFFF',
-    thickness: 'medium',
-    style: 'classic',
-    corners: 'square'
-  });
-
+const FrameCustomizationPanel = ({ 
+  borderThickness, 
+  borderRadius, 
+  borderColor, 
+  borderStyle,
+  onBorderThicknessChange,
+  onBorderRadiusChange,
+  onBorderColorChange,
+  onBorderStyleChange,
+  isOpen, 
+  onClose 
+}: FrameCustomizationPanelProps) => {
   if (!isOpen) return null;
-
-  const handleStyleChange = (updates: Partial<FrameStyle>) => {
-    const newStyle = { ...currentStyle, ...updates };
-    setCurrentStyle(newStyle);
-    if (selectedFrame) {
-      onFrameStyleChange(selectedFrame, newStyle);
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -68,17 +67,47 @@ const FrameCustomizationPanel = ({ selectedFrame, onFrameStyleChange, isOpen, on
             </button>
           </div>
 
-          {/* Frame Colors */}
+          {/* Border Thickness */}
           <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Frame Color</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">
+              Border Thickness: {borderThickness}px
+            </h3>
+            <Slider
+              value={[borderThickness]}
+              onValueChange={(value) => onBorderThicknessChange(value[0])}
+              max={20}
+              min={0}
+              step={1}
+              className="w-full"
+            />
+          </div>
+
+          {/* Corner Radius */}
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">
+              Corner Radius: {borderRadius}px
+            </h3>
+            <Slider
+              value={[borderRadius]}
+              onValueChange={(value) => onBorderRadiusChange(value[0])}
+              max={50}
+              min={0}
+              step={1}
+              className="w-full"
+            />
+          </div>
+
+          {/* Border Colors */}
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Border Color</h3>
             <div className="grid grid-cols-4 gap-2">
               {frameColors.map((color) => (
                 <button
                   key={color.name}
-                  onClick={() => handleStyleChange({ color: color.color })}
+                  onClick={() => onBorderColorChange(color.color)}
                   className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                    currentStyle.color === color.color
-                      ? 'border-pink-500 scale-110 shadow-lg'
+                    borderColor === color.color
+                      ? 'border-blue-500 scale-110 shadow-lg'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                   style={{ backgroundColor: color.color }}
@@ -88,70 +117,26 @@ const FrameCustomizationPanel = ({ selectedFrame, onFrameStyleChange, isOpen, on
             </div>
           </div>
 
-          {/* Frame Thickness */}
+          {/* Border Style */}
           <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Frame Thickness</h3>
-            <div className="flex gap-2">
-              {['thin', 'medium', 'thick'].map((thickness) => (
-                <button
-                  key={thickness}
-                  onClick={() => handleStyleChange({ thickness: thickness as any })}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    currentStyle.thickness === thickness
-                      ? 'bg-pink-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {thickness.charAt(0).toUpperCase() + thickness.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Frame Style */}
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Frame Style</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Border Style</h3>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { id: 'classic', name: 'Classic', icon: Square },
-                { id: 'ornate', name: 'Ornate', icon: Star },
-                { id: 'minimalist', name: 'Minimalist', icon: Circle },
-                { id: 'shadow', name: 'Shadow', icon: Sparkles }
-              ].map((style) => {
-                const IconComponent = style.icon;
-                return (
-                  <button
-                    key={style.id}
-                    onClick={() => handleStyleChange({ style: style.id as any })}
-                    className={`p-3 rounded-lg border transition-all flex items-center gap-2 ${
-                      currentStyle.style === style.id
-                        ? 'border-pink-500 bg-pink-50 text-pink-700'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <IconComponent size={16} />
-                    <span className="text-sm font-medium">{style.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Corner Style */}
-          <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Corner Style</h3>
-            <div className="flex gap-2">
-              {['square', 'rounded', 'torn'].map((corner) => (
+                { id: 'solid', name: 'Solid' },
+                { id: 'dashed', name: 'Dashed' },
+                { id: 'dotted', name: 'Dotted' },
+                { id: 'double', name: 'Double' }
+              ].map((style) => (
                 <button
-                  key={corner}
-                  onClick={() => handleStyleChange({ corners: corner as any })}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    currentStyle.corners === corner
-                      ? 'bg-pink-500 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  key={style.id}
+                  onClick={() => onBorderStyleChange(style.id)}
+                  className={`p-3 rounded-lg border transition-all ${
+                    borderStyle === style.id
+                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  {corner.charAt(0).toUpperCase() + corner.slice(1)}
+                  <span className="text-sm font-medium">{style.name}</span>
                 </button>
               ))}
             </div>
