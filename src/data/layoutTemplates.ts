@@ -1,200 +1,104 @@
 
 export interface LayoutCell {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
   id: string;
+  gridColumn: number;
+  gridRow: number;
+  gridColumnSpan: number;
+  gridRowSpan: number;
 }
 
 export interface LayoutTemplate {
   id: string;
   name: string;
+  gridColumns: number;
+  gridRows: number;
   cells: LayoutCell[];
-  icon: string;
+  icon?: string;
   isPro?: boolean;
 }
 
 export const layoutTemplates: LayoutTemplate[] = [
   {
-    id: 'grid2x2',
+    id: 'grid-2x2',
     name: '2x2 Grid',
     icon: '⊞',
+    gridColumns: 2,
+    gridRows: 2,
     cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 1, h: 1 },
-      { id: 'cell-2', x: 1, y: 0, w: 1, h: 1 },
-      { id: 'cell-3', x: 0, y: 1, w: 1, h: 1 },
-      { id: 'cell-4', x: 1, y: 1, w: 1, h: 1 }
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 2, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 1, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-4', gridColumn: 2, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 }
     ]
   },
   {
-    id: 'grid3',
-    name: '3 Grid',
+    id: 'grid-3x3',
+    name: '3x3 Grid',
     icon: '⊟',
+    gridColumns: 3,
+    gridRows: 3,
     cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 1, h: 1 },
-      { id: 'cell-2', x: 1, y: 0, w: 1, h: 1 },
-      { id: 'cell-3', x: 0, y: 1, w: 2, h: 1 }
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 2, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 3, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-4', gridColumn: 1, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-5', gridColumn: 2, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-6', gridColumn: 3, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-7', gridColumn: 1, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-8', gridColumn: 2, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-9', gridColumn: 3, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 }
     ]
   },
   {
-    id: 'split',
-    name: 'Split',
+    id: 'grid-1x3',
+    name: '1x3 Strip',
+    icon: '▬',
+    gridColumns: 3,
+    gridRows: 1,
+    cells: [
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 2, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 3, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 }
+    ]
+  },
+  {
+    id: 'grid-3x1',
+    name: '3x1 Strip',
     icon: '⫶',
+    gridColumns: 1,
+    gridRows: 3,
     cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 1, h: 2 },
-      { id: 'cell-2', x: 1, y: 0, w: 1, h: 1 },
-      { id: 'cell-3', x: 1, y: 1, w: 1, h: 1 }
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 1, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 1, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 }
     ]
   },
   {
-    id: 'circle',
-    name: 'Circle Center',
-    icon: '●',
-    cells: [
-      { id: 'cell-1', x: 0.5, y: 0.5, w: 0.8, h: 0.8 },
-      { id: 'cell-2', x: 0.1, y: 0.1, w: 0.3, h: 0.3 },
-      { id: 'cell-3', x: 0.6, y: 0.1, w: 0.3, h: 0.3 },
-      { id: 'cell-4', x: 0.1, y: 0.6, w: 0.3, h: 0.3 },
-      { id: 'cell-5', x: 0.6, y: 0.6, w: 0.3, h: 0.3 }
-    ]
-  },
-  {
-    id: 'magazine',
-    name: 'Magazine',
-    icon: '⬛',
-    cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 2, h: 1 },
-      { id: 'cell-2', x: 0, y: 1, w: 1, h: 1 },
-      { id: 'cell-3', x: 1, y: 1, w: 1, h: 0.5 },
-      { id: 'cell-4', x: 1, y: 1.5, w: 1, h: 0.5 }
-    ]
-  },
-  {
-    id: 'mosaic',
-    name: 'Mosaic',
-    icon: '◆',
-    cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 0.6, h: 0.6 },
-      { id: 'cell-2', x: 0.6, y: 0, w: 0.4, h: 0.4 },
-      { id: 'cell-3', x: 0.6, y: 0.4, w: 0.4, h: 0.2 },
-      { id: 'cell-4', x: 0, y: 0.6, w: 0.3, h: 0.4 },
-      { id: 'cell-5', x: 0.3, y: 0.6, w: 0.3, h: 0.4 },
-      { id: 'cell-6', x: 0.6, y: 0.6, w: 0.4, h: 0.4 }
-    ]
-  },
-  {
-    id: 'diagonal',
-    name: 'Diagonal',
-    icon: '⧸',
-    cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 0.7, h: 0.7 },
-      { id: 'cell-2', x: 0.6, y: 0.1, w: 0.35, h: 0.35 },
-      { id: 'cell-3', x: 0.3, y: 0.6, w: 0.35, h: 0.35 },
-      { id: 'cell-4', x: 0.65, y: 0.65, w: 0.3, h: 0.3 }
-    ]
-  },
-  {
-    id: 'asymmetric',
-    name: 'Asymmetric',
-    icon: '◣',
-    cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 1.3, h: 0.6 },
-      { id: 'cell-2', x: 1.3, y: 0, w: 0.7, h: 1 },
-      { id: 'cell-3', x: 0, y: 0.6, w: 0.6, h: 1.4 },
-      { id: 'cell-4', x: 0.6, y: 0.6, w: 0.7, h: 0.7 },
-      { id: 'cell-5', x: 0.6, y: 1.3, w: 0.7, h: 0.7 }
-    ]
-  },
-  {
-    id: 'story',
-    name: 'Story Flow',
-    icon: '📱',
-    cells: [
-      { id: 'cell-1', x: 0.1, y: 0, w: 1.8, h: 0.8 },
-      { id: 'cell-2', x: 0, y: 0.8, w: 0.8, h: 0.6 },
-      { id: 'cell-3', x: 0.8, y: 0.8, w: 0.6, h: 0.6 },
-      { id: 'cell-4', x: 1.4, y: 0.8, w: 0.6, h: 0.6 },
-      { id: 'cell-5', x: 0.2, y: 1.4, w: 1.6, h: 0.6 }
-    ]
-  },
-  {
-    id: 'hexagon',
-    name: 'Hexagon',
-    icon: '⬡',
-    isPro: true,
-    cells: [
-      { id: 'cell-1', x: 0.5, y: 0.1, w: 0.8, h: 0.4 },
-      { id: 'cell-2', x: 0.1, y: 0.3, w: 0.6, h: 0.4 },
-      { id: 'cell-3', x: 1.1, y: 0.3, w: 0.6, h: 0.4 },
-      { id: 'cell-4', x: 0.1, y: 0.9, w: 0.6, h: 0.4 },
-      { id: 'cell-5', x: 1.1, y: 0.9, w: 0.6, h: 0.4 },
-      { id: 'cell-6', x: 0.5, y: 1.1, w: 0.8, h: 0.4 }
-    ]
-  },
-  {
-    id: 'pyramid',
-    name: 'Pyramid',
-    icon: '△',
-    isPro: true,
-    cells: [
-      { id: 'cell-1', x: 0.75, y: 0, w: 0.5, h: 0.5 },
-      { id: 'cell-2', x: 0.25, y: 0.4, w: 0.6, h: 0.6 },
-      { id: 'cell-3', x: 1.15, y: 0.4, w: 0.6, h: 0.6 },
-      { id: 'cell-4', x: 0, y: 1, w: 0.5, h: 0.5 },
-      { id: 'cell-5', x: 0.5, y: 1, w: 0.5, h: 0.5 },
-      { id: 'cell-6', x: 1, y: 1, w: 0.5, h: 0.5 },
-      { id: 'cell-7', x: 1.5, y: 1, w: 0.5, h: 0.5 }
-    ]
-  },
-  {
-    id: 'artistic',
-    name: 'Artistic',
-    icon: '🎨',
-    isPro: true,
-    cells: [
-      { id: 'cell-1', x: 0.1, y: 0.1, w: 0.9, h: 0.5 },
-      { id: 'cell-2', x: 1.1, y: 0.0, w: 0.4, h: 0.7 },
-      { id: 'cell-3', x: 0.0, y: 0.7, w: 0.5, h: 0.8 },
-      { id: 'cell-4', x: 0.6, y: 0.6, w: 0.5, h: 0.4 },
-      { id: 'cell-5', x: 1.2, y: 0.8, w: 0.6, h: 0.7 }
-    ]
-  },
-  // Additional clean grid layouts
-  {
-    id: 'grid4',
-    name: '4 Grid',
+    id: 'grid-2x3',
+    name: '2x3 Grid',
     icon: '▦',
+    gridColumns: 2,
+    gridRows: 3,
     cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 1, h: 1 },
-      { id: 'cell-2', x: 1, y: 0, w: 1, h: 1 },
-      { id: 'cell-3', x: 0, y: 1, w: 1, h: 1 },
-      { id: 'cell-4', x: 1, y: 1, w: 1, h: 1 }
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 2, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 1, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-4', gridColumn: 2, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-5', gridColumn: 1, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-6', gridColumn: 2, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 }
     ]
   },
   {
-    id: 'grid5',
-    name: '5 Grid',
-    icon: '▣',
+    id: 'grid-focus',
+    name: 'Focus Grid',
+    icon: '●',
+    gridColumns: 3,
+    gridRows: 2,
     cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 2, h: 1 },
-      { id: 'cell-2', x: 0, y: 1, w: 1, h: 1 },
-      { id: 'cell-3', x: 1, y: 1, w: 1, h: 1 },
-      { id: 'cell-4', x: 0, y: 2, w: 1, h: 1 },
-      { id: 'cell-5', x: 1, y: 2, w: 1, h: 1 }
-    ]
-  },
-  {
-    id: 'grid6',
-    name: '6 Grid',
-    icon: '⬚',
-    cells: [
-      { id: 'cell-1', x: 0, y: 0, w: 1, h: 1 },
-      { id: 'cell-2', x: 1, y: 0, w: 1, h: 1 },
-      { id: 'cell-3', x: 2, y: 0, w: 1, h: 1 },
-      { id: 'cell-4', x: 0, y: 1, w: 1, h: 1 },
-      { id: 'cell-5', x: 1, y: 1, w: 1, h: 1 },
-      { id: 'cell-6', x: 2, y: 1, w: 1, h: 1 }
-    ]
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 2, gridRowSpan: 2 },
+      { id: 'frame-2', gridColumn: 3, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 3, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 }
+    ],
+    isPro: true
   }
 ];

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PhotoFrame from './PhotoFrame';
+import GridPhotoFrame from './GridPhotoFrame';
 import DecorativeElement from './DecorativeElement';
 import FrameCustomizationPanel from './FrameCustomizationPanel';
 import BackgroundCustomizationPanel from './BackgroundCustomizationPanel';
@@ -33,7 +33,17 @@ const PhotoCollage = () => {
   const [photos, setPhotos] = useState<{[key: string]: { file?: File, caption: string }}>({});
   const [currentTheme, setCurrentTheme] = useState<Theme>(themes[1]);
   const [currentLayout, setCurrentLayout] = useState<LayoutTemplate | undefined>();
-  const [layout, setLayout] = useState(() => aiLayoutGenerator.generateCollageLayout());
+  const [layout, setLayout] = useState({
+    frames: [
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 2, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 1, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-4', gridColumn: 2, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 }
+    ],
+    gridColumns: 2,
+    gridRows: 2,
+    decorativeElements: []
+  });
   const [customBackground, setCustomBackground] = useState<string>('linear-gradient(135deg, #FFF8E7 0%, #FFE5B4 100%)');
   
   // Tool panel states
@@ -88,19 +98,19 @@ const PhotoCollage = () => {
     console.log('Applying layout template:', layoutTemplate.name);
     setCurrentLayout(layoutTemplate);
     
-    const newFrames = layoutTemplate.cells.map((cell, index) => ({
+    const newFrames = layoutTemplate.cells.map((cell) => ({
       id: cell.id,
-      position: {
-        top: `${(cell.y * 40) + 10}%`,
-        left: `${(cell.x * 40) + 10}%`
-      },
-      rotation: 0,
-      size: cell.w > 1.5 ? 'large' : cell.w > 0.8 ? 'medium' : 'small' as 'small' | 'medium' | 'large'
+      gridColumn: cell.gridColumn,
+      gridRow: cell.gridRow,
+      gridColumnSpan: cell.gridColumnSpan,
+      gridRowSpan: cell.gridRowSpan
     }));
 
     setLayout(prev => ({
       ...prev,
-      frames: newFrames
+      frames: newFrames,
+      gridColumns: layoutTemplate.gridColumns,
+      gridRows: layoutTemplate.gridRows
     }));
     
     setPhotos({});
@@ -264,17 +274,14 @@ const PhotoCollage = () => {
               ...getCollageStyle()
             }}
           >
-            {/* Decorative elements */}
-            {layout.decorativeElements.map((element, index) => (
-              <DecorativeElement
-                key={`decoration-${index}`}
-                type={element.type}
-                position={element.position}
-                rotation={element.rotation}
-                color={currentTheme.decorativeElements[`${element.type}Colors`][index % currentTheme.decorativeElements[`${element.type}Colors`].length]}
-                size={element.size}
-              />
-            ))}
+            {/* Grid layout for frames */}
+            <div 
+              className="grid w-full h-full gap-2 p-4"
+              style={{
+                gridTemplateColumns: `repeat(${layout.gridColumns}, 1fr)`,
+                gridTemplateRows: `repeat(${layout.gridRows}, 1fr)`
+              }}
+            >
 
             {/* Custom stickers */}
             {customStickers.map((sticker) => {
@@ -305,24 +312,23 @@ const PhotoCollage = () => {
               );
             })}
 
-            {/* Photo frames */}
-            {layout.frames.map((frame) => (
-              <PhotoFrame
-                key={frame.id}
-                id={frame.id}
-                rotation={frame.rotation}
-                position={frame.position}
-                size={frame.size}
-                caption={photos[frame.id]?.caption || ""}
-                onImageUpload={handleImageUpload}
-                onCaptionChange={handleCaptionChange}
-                onPositionChange={handleFramePositionChange}
-                onRotationChange={handleFrameRotationChange}
-                onSizeChange={handleFrameSizeChange}
-                theme={currentTheme}
-                editMode={true}
-              />
-            ))}
+              {/* Photo frames */}
+              {layout.frames.map((frame) => (
+                <GridPhotoFrame
+                  key={frame.id}
+                  id={frame.id}
+                  gridColumn={frame.gridColumn}
+                  gridRow={frame.gridRow}
+                  gridColumnSpan={frame.gridColumnSpan}
+                  gridRowSpan={frame.gridRowSpan}
+                  caption={photos[frame.id]?.caption || ""}
+                  onImageUpload={handleImageUpload}
+                  onCaptionChange={handleCaptionChange}
+                  theme={currentTheme}
+                  editMode={true}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

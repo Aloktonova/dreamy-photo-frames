@@ -1,4 +1,4 @@
-import { LayoutConfig } from '@/types/styles';
+import { GridLayoutConfig } from '@/types/styles';
 
 class AILayoutGenerator {
   private layoutStyles = [
@@ -139,59 +139,33 @@ class AILayoutGenerator {
     return types[Math.floor(Math.random() * types.length)];
   }
 
-  generateCollageLayout(frameCount: number = 8): LayoutConfig {
-    // Pick a random layout style
-    const layoutStyle = this.layoutStyles[Math.floor(Math.random() * this.layoutStyles.length)];
-    console.log(`🎨 Generating dramatic ${layoutStyle} layout with ${frameCount} frames`);
+  generateCollageLayout(frameCount: number = 4): GridLayoutConfig {
+    // Generate a simple grid layout
+    const cols = frameCount === 4 ? 2 : frameCount === 6 ? 3 : frameCount === 9 ? 3 : 2;
+    const rows = Math.ceil(frameCount / cols);
     
-    let positions: { top: string; left: string }[];
-    
-    switch (layoutStyle) {
-      case 'grid':
-        positions = this.getGridLayout(frameCount);
-        break;
-      case 'cluster':
-        positions = this.getClusterLayout(frameCount);
-        break;
-      case 'diagonal':
-        positions = this.getDiagonalLayout(frameCount);
-        break;
-      case 'circular':
-        positions = this.getCircularLayout(frameCount);
-        break;
-      case 'vintage-stack':
-        positions = this.getVintageStackLayout(frameCount);
-        break;
-      default: // scattered
-        positions = this.getScatteredLayout(frameCount);
-    }
+    const frames = Array.from({ length: frameCount }, (_, i) => {
+      const row = Math.floor(i / cols) + 1;
+      const col = (i % cols) + 1;
+      
+      return {
+        id: `frame-${i + 1}`,
+        gridColumn: col,
+        gridRow: row,
+        gridColumnSpan: 1,
+        gridRowSpan: 1
+      };
+    });
 
-    // Create dramatic size variations
-    const sizes = this.createFocusLayout(frameCount);
-
-    const frames = positions.map((position, i) => ({
-      id: `frame${i + 1}`,
-      rotation: this.getRandomRotation(),
-      position,
-      size: sizes[i]
-    }));
-
-    // More decorative elements for richer layouts
-    const decorativeCount = Math.floor(frameCount * 0.6) + 3; // More decorations
-    const decorativeElements = Array.from({ length: decorativeCount }, () => ({
-      type: this.getRandomDecorativeType(),
-      position: this.getRandomPosition(),
-      rotation: Math.random() * 60 - 30,
-      size: 'small' as const
-    }));
-
-    console.log(`✨ Created ${layoutStyle} layout with ${frames.length} frames and ${decorativeElements.length} decorations`);
-    
-    return { frames, decorativeElements };
+    return { 
+      frames, 
+      gridColumns: cols,
+      gridRows: rows,
+      decorativeElements: [] 
+    };
   }
 
-  // Keep backward compatibility
-  generateLayout(frameCount: number = 6): LayoutConfig {
+  generateLayout(frameCount: number = 4): GridLayoutConfig {
     return this.generateCollageLayout(frameCount);
   }
 }

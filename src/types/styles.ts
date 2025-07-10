@@ -19,13 +19,16 @@ export interface Theme {
   };
 }
 
-export interface LayoutConfig {
+export interface GridLayoutConfig {
   frames: Array<{
     id: string;
-    rotation: number;
-    position: { top: string; left: string };
-    size: 'small' | 'medium' | 'large';
+    gridColumn: number;
+    gridRow: number;
+    gridColumnSpan: number;
+    gridRowSpan: number;
   }>;
+  gridColumns: number;
+  gridRows: number;
   decorativeElements: Array<{
     type: 'tape' | 'sticker' | 'doodle';
     position: { top: string; left: string };

@@ -51,16 +51,20 @@ const LayoutSelector = ({ currentLayout, onSelectLayout, isOpen, onClose }: Layo
                       : 'border-transparent'
                   }`}
                 >
-                  <div className="layout-thumbnail relative w-full aspect-square bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden">
+                  <div 
+                    className="layout-thumbnail relative w-full aspect-square bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden grid gap-1 p-1"
+                    style={{
+                      gridTemplateColumns: `repeat(${layout.gridColumns}, 1fr)`,
+                      gridTemplateRows: `repeat(${layout.gridRows}, 1fr)`
+                    }}
+                  >
                     {layout.cells.map((cell, idx) => (
                       <div
                         key={idx}
-                        className="cell-preview absolute bg-gradient-to-br from-blue-200 to-blue-300 border border-blue-400 rounded-sm"
+                        className="cell-preview bg-gradient-to-br from-blue-200 to-blue-300 border border-blue-400 rounded-sm"
                         style={{
-                          left: `${Math.max(0, Math.min(90, cell.x * 45))}%`,
-                          top: `${Math.max(0, Math.min(90, cell.y * 45))}%`,
-                          width: `${Math.max(5, Math.min(50, cell.w * 45))}%`,
-                          height: `${Math.max(5, Math.min(50, cell.h * 45))}%`,
+                          gridColumn: `${cell.gridColumn} / span ${cell.gridColumnSpan}`,
+                          gridRow: `${cell.gridRow} / span ${cell.gridRowSpan}`
                         }}
                       />
                     ))}
@@ -105,16 +109,20 @@ const LayoutSelector = ({ currentLayout, onSelectLayout, isOpen, onClose }: Layo
                       : 'border-transparent'
                   }`}
                 >
-                  <div className="layout-thumbnail relative w-full aspect-square bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden">
+                  <div 
+                    className="layout-thumbnail relative w-full aspect-square bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden grid gap-1 p-1"
+                    style={{
+                      gridTemplateColumns: `repeat(${layout.gridColumns}, 1fr)`,
+                      gridTemplateRows: `repeat(${layout.gridRows}, 1fr)`
+                    }}
+                  >
                     {layout.cells.map((cell, idx) => (
                       <div
                         key={idx}
-                        className="cell-preview absolute bg-gradient-to-br from-orange-200 to-orange-300 border border-orange-400 rounded-sm"
+                        className="cell-preview bg-gradient-to-br from-orange-200 to-orange-300 border border-orange-400 rounded-sm"
                         style={{
-                          left: `${Math.max(0, Math.min(90, cell.x * 45))}%`,
-                          top: `${Math.max(0, Math.min(90, cell.y * 45))}%`,
-                          width: `${Math.max(5, Math.min(50, cell.w * 45))}%`,
-                          height: `${Math.max(5, Math.min(50, cell.h * 45))}%`,
+                          gridColumn: `${cell.gridColumn} / span ${cell.gridColumnSpan}`,
+                          gridRow: `${cell.gridRow} / span ${cell.gridRowSpan}`
                         }}
                       />
                     ))}
