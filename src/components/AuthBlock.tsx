@@ -18,6 +18,26 @@ const AuthBlock: React.FC<AuthBlockProps> = ({ onAuthenticated }) => {
   const [password, setPassword] = useState('');
   const { toast } = useToast();
 
+  const handleUserProfile = async (user: User) => {
+    try {
+      // Fetch IP and country data
+      const response = await fetch('https://ipapi.co/json/');
+      const locationData = await response.json();
+      
+      // Upsert user profile data
+      await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          username: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+          country: locationData.country_name || null,
+          ip_address: locationData.ip || null,
+        });
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+    }
+  };
+
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -26,6 +46,10 @@ const AuthBlock: React.FC<AuthBlockProps> = ({ onAuthenticated }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          // Handle profile update in background
+          setTimeout(() => {
+            handleUserProfile(session.user);
+          }, 0);
           onAuthenticated(session.user);
         }
       }
@@ -37,6 +61,10 @@ const AuthBlock: React.FC<AuthBlockProps> = ({ onAuthenticated }) => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
+        // Handle profile update in background
+        setTimeout(() => {
+          handleUserProfile(session.user);
+        }, 0);
         onAuthenticated(session.user);
       }
     });
