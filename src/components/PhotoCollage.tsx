@@ -221,34 +221,40 @@ const PhotoCollage = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Top Header */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
-        >
-          <ArrowLeft size={20} />
-          <span className="font-medium">Back</span>
-        </button>
-        
-        <h1 className="text-lg font-semibold text-gray-800">Collage Editor</h1>
-        
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowHelp(!showHelp)}
-            className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            <HelpCircle size={20} />
-          </button>
-          <button className="p-2 text-yellow-500 hover:text-yellow-600 transition-colors">
-            <Crown size={20} />
-          </button>
-          <button
-            onClick={() => setDownloadModalOpen(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-          >
-            <Download size={16} />
-            Save
-          </button>
+      <div className="bg-white border-b border-gray-200 px-3 sm:px-4 py-3">
+        <div className="flex items-center justify-between max-w-full">
+          <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-1 sm:gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              <ArrowLeft size={18} className="sm:size-[20px]" />
+              <span className="font-medium text-sm sm:text-base">Back</span>
+            </button>
+          </div>
+          
+          <h1 className="text-base sm:text-lg font-semibold text-gray-800 text-center flex-1 min-w-0 mx-2">
+            Collage Editor
+          </h1>
+          
+          <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
+            <button
+              onClick={() => setShowHelp(!showHelp)}
+              className="p-1.5 sm:p-2 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <HelpCircle size={18} className="sm:size-[20px]" />
+            </button>
+            <button className="p-1.5 sm:p-2 text-yellow-500 hover:text-yellow-600 transition-colors">
+              <Crown size={18} className="sm:size-[20px]" />
+            </button>
+            <button
+              onClick={() => setDownloadModalOpen(true)}
+              className="bg-blue-500 text-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-1 sm:gap-2"
+            >
+              <Download size={14} className="sm:size-[16px]" />
+              <span className="text-sm sm:text-base">Save</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -263,14 +269,14 @@ const PhotoCollage = () => {
       )}
 
       {/* Main Canvas Area */}
-      <div className="flex-1 p-4 pb-32 overflow-auto">
-        <div className="max-w-4xl mx-auto">
+      <div className="flex-1 p-2 sm:p-4 pb-32 overflow-auto">
+        <div className="w-full max-w-4xl mx-auto flex justify-center">
           <div 
             id="collage-canvas"
-            className="relative bg-white rounded-2xl shadow-lg mx-auto" 
+            className="relative bg-white rounded-2xl shadow-lg w-full max-w-[90vw] sm:max-w-[600px]" 
             style={{ 
-              width: '600px',
-              height: '600px',
+              aspectRatio: '1/1',
+              maxHeight: 'calc(100vh - 200px)',
               ...getCollageStyle()
             }}
           >
