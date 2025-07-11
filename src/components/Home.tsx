@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { User } from '@supabase/supabase-js';
 import { 
   LayoutGrid, 
   Wand2, 
@@ -9,12 +10,29 @@ import {
   Scissors, 
   Grid3X3,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import AuthBlock from './AuthBlock';
 
 const Home = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+
+  const handleAuthenticated = (authenticatedUser: User) => {
+    setUser(authenticatedUser);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
 
   const quickModes = [
     {
@@ -72,7 +90,32 @@ const Home = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-16">
+        {/* Authentication Section */}
+        {!user ? (
+          <div className="mb-12">
+            <AuthBlock onAuthenticated={handleAuthenticated} />
+          </div>
+        ) : (
+          <div className="text-center mb-12">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50 max-w-md mx-auto">
+              <p className="text-gray-700 mb-4">
+                Welcome back, <span className="font-semibold">{user.email}</span>!
+              </p>
+              <Button
+                onClick={handleSignOut}
+                variant="outline"
+                size="sm"
+                className="border-gray-300 hover:bg-gray-50"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign Out
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Main Action Buttons */}
+        {user && (
         <div className="grid md:grid-cols-2 gap-6 mb-12">
           <button
             onClick={() => handleModeSelect('collage')}
@@ -106,8 +149,10 @@ const Home = () => {
             </p>
           </button>
         </div>
+        )}
 
         {/* Quick Modes Section */}
+        {user && (
         <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold text-gray-800 mb-2">Quick Modes</h3>
@@ -133,8 +178,10 @@ const Home = () => {
             })}
           </div>
         </div>
+        )}
 
         {/* Advanced Features Preview */}
+        {user && (
         <div className="mt-12 grid md:grid-cols-2 gap-6">
           <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-green-200">
             <div className="flex items-center gap-3 mb-3">
@@ -160,6 +207,7 @@ const Home = () => {
             </p>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
