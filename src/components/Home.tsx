@@ -17,23 +17,31 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import AuthBlock from './AuthBlock';
 import Navbar from './Navbar';
+import { useToast } from '@/components/ui/use-toast';
+import { useSignOut } from '@/hooks/useSignOut';
 
 const Home = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
+  const { toast } = useToast();
+  const signOut = useSignOut(() => setUser(null));
 
   const handleAuthenticated = (authenticatedUser: User) => {
     setUser(authenticatedUser);
   };
 
-  const handleSignOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      setUser(null);
-    } catch (error) {
-      console.error('Sign out error:', error);
+  const handleSignOut = signOut;
+
+  useEffect(() => {
+    if (user) {
+      // Prefer name, fallback to email
+      const name = user.user_metadata?.name || user.user_metadata?.full_name || user.user_metadata?.given_name || user.email?.split('@')[0] || user.email;
+      toast({
+        title: `Welcome back, ${name}!`,
+        duration: 1500,
+      });
     }
-  };
+  }, [user, toast]);
 
   const quickModes = [
     {
@@ -98,24 +106,7 @@ const Home = () => {
             <div className="mb-12">
               <AuthBlock onAuthenticated={handleAuthenticated} />
             </div>
-          ) : (
-            <div className="text-center mb-12">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50 max-w-md mx-auto">
-                <p className="text-gray-700 mb-4">
-                  Welcome back, <span className="font-semibold">{user.email}</span>!
-                </p>
-                <Button
-                  onClick={handleSignOut}
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-300 hover:bg-gray-50"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </Button>
-              </div>
-            </div>
-          )}
+          ) : null}
 
           {/* Main Action Buttons */}
           {user && (
