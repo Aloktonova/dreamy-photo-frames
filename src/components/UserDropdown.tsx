@@ -1,109 +1,64 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, User, Settings, LogOut } from 'lucide-react';
+import React from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { User, Settings, LogOut } from 'lucide-react';
 
 interface UserDropdownProps {
   userName?: string;
   userEmail?: string;
-  onViewProfile?: () => void;
+  avatarUrl?: string;
+  onProfile?: () => void;
   onSettings?: () => void;
   onLogout?: () => void;
-  className?: string;
 }
 
 const UserDropdown: React.FC<UserDropdownProps> = ({
   userName = 'User',
-  userEmail = 'user@example.com',
-  onViewProfile,
+  userEmail = '',
+  avatarUrl = '',
+  onProfile,
   onSettings,
   onLogout,
-  className = ''
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleViewProfile = () => {
-    onViewProfile?.();
-    setIsOpen(false);
-  };
-
-  const handleSettings = () => {
-    onSettings?.();
-    setIsOpen(false);
-  };
-
-  const handleLogout = () => {
-    onLogout?.();
-    setIsOpen(false);
-  };
-
   return (
-    <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}>
-      {/* Profile Button */}
-      <button
-        onClick={handleToggle}
-        className="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      >
-        <User className="w-5 h-5 mr-2" />
-        {userName}
-        <ChevronDown className="w-4 h-4 ml-2" />
-      </button>
-
-      {/* Dropdown Menu */}
-      {isOpen && (
-        <div className="absolute right-0 z-10 w-56 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <div className="px-4 py-3">
-            <p className="text-sm text-gray-900 font-medium">{userName}</p>
-            <p className="text-sm text-gray-500 truncate">{userEmail}</p>
-          </div>
-          
-          <div className="py-1">
-            <button
-              onClick={handleViewProfile}
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-            >
-              <User className="w-4 h-4 mr-3" />
-              View Profile
-            </button>
-            
-            <button
-              onClick={handleSettings}
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-            >
-              <Settings className="w-4 h-4 mr-3" />
-              Settings
-            </button>
-          </div>
-          
-          <div className="py-1">
-            <button
-              onClick={handleLogout}
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-            >
-              <LogOut className="w-4 h-4 mr-3" />
-              Logout
-            </button>
-          </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
+          <Avatar className="h-9 w-9">
+            {avatarUrl ? (
+              <AvatarImage src={avatarUrl} alt={userName} />
+            ) : (
+              <AvatarFallback>
+                {userName ? userName[0] : <User className="h-5 w-5" />}
+              </AvatarFallback>
+            )}
+          </Avatar>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <div className="px-3 py-2">
+          <div className="font-medium text-sm text-gray-900 truncate">{userName}</div>
+          {userEmail && <div className="text-xs text-gray-500 truncate">{userEmail}</div>}
         </div>
-      )}
-    </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onProfile} className="flex items-center gap-2 cursor-pointer">
+          <User className="h-4 w-4" /> My Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onSettings} className="flex items-center gap-2 cursor-pointer">
+          <Settings className="h-4 w-4" /> Settings
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onLogout} className="flex items-center gap-2 text-red-600 cursor-pointer">
+          <LogOut className="h-4 w-4" /> Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

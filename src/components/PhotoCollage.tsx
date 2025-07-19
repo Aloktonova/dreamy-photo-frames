@@ -275,8 +275,10 @@ const PhotoCollage = () => {
             id="collage-canvas"
             className="relative bg-white rounded-2xl shadow-lg w-full max-w-[90vw] sm:max-w-[600px]" 
             style={{ 
-              aspectRatio: '1/1',
-              maxHeight: 'calc(100vh - 200px)',
+              width: '600px',
+              height: '600px',
+              maxWidth: '90vw',
+              maxHeight: '90vw',
               ...getCollageStyle()
             }}
           >
