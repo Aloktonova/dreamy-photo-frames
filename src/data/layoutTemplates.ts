@@ -17,12 +17,14 @@ export interface LayoutTemplate {
   isPro?: boolean;
   category?: string;
   maxPhotos?: number;
+  featured?: boolean;
+  new?: boolean;
 }
 
 export const layoutTemplates: LayoutTemplate[] = [
   // --- Classic Grids ---
   {
-    id: 'grid-2x2', name: '2x2 Grid', icon: '⊞', category: 'Grid', maxPhotos: 4, gridColumns: 2, gridRows: 2,
+    id: 'grid-2x2', name: '2x2 Grid', icon: '⊞', category: 'Grid', maxPhotos: 4, gridColumns: 2, gridRows: 2, featured: true,
     cells: [
       { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
       { id: 'frame-2', gridColumn: 2, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
@@ -358,6 +360,48 @@ export const layoutTemplates: LayoutTemplate[] = [
       { id: 'frame-4', gridColumn: 3, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
       { id: 'frame-5', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
       { id: 'frame-6', gridColumn: 3, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 }
+    ]
+  },
+  {
+    id: 'photo-booth', name: 'Photo Booth', icon: '📸', category: 'Social', maxPhotos: 4, gridColumns: 1, gridRows: 4, new: true,
+    cells: [
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 1, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 1, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-4', gridColumn: 1, gridRow: 4, gridColumnSpan: 1, gridRowSpan: 1 }
+    ]
+  },
+  {
+    id: 'story-banner', name: 'Story Banner', icon: '🖼️', category: 'Social', maxPhotos: 3, gridColumns: 3, gridRows: 1, new: true,
+    cells: [
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 2, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 3, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 }
+    ]
+  },
+  {
+    id: 'timeline-horizontal', name: 'Timeline Horizontal', icon: '⏳', category: 'Event', maxPhotos: 6, gridColumns: 6, gridRows: 1, featured: true,
+    cells: [
+      { id: 'frame-1', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 2, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 3, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-4', gridColumn: 4, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-5', gridColumn: 5, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-6', gridColumn: 6, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 }
+    ]
+  },
+  {
+    id: 'wedding-theme', name: 'Wedding Theme', icon: '💍', category: 'Event', maxPhotos: 9, gridColumns: 3, gridRows: 3, new: true,
+    cells: [
+      { id: 'frame-1', gridColumn: 2, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-2', gridColumn: 1, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-3', gridColumn: 2, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-4', gridColumn: 3, gridRow: 2, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-5', gridColumn: 1, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-6', gridColumn: 2, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-7', gridColumn: 3, gridRow: 3, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-8', gridColumn: 1, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 },
+      { id: 'frame-9', gridColumn: 3, gridRow: 1, gridColumnSpan: 1, gridRowSpan: 1 }
     ]
   }
 ];

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Filter, X } from 'lucide-react';
+import { filterPresets } from '@/data/filterPresets';
+import { Undo2, Redo2, RefreshCw, Eye, EyeOff, Brush, Info } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 
 interface FilterSettings {

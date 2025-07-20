@@ -9,7 +9,8 @@ import PhotoCollage from "./components/PhotoCollage";
 import EditPage from "./components/EditPage";
 import NotFound from "./pages/NotFound";
 import ProfilePage from "./pages/Profile";
-import SettingsPage from "./pages/Settings";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -24,7 +25,8 @@ const App = () => (
           <Route path="/collage" element={<PhotoCollage />} />
           <Route path="/edit" element={<EditPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/profile/edit" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

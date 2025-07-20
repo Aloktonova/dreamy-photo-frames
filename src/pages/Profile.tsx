@@ -1,126 +1,63 @@
-import React, { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
-const initialProfile = {
-  first_name: "",
-  last_name: "",
-  email: "",
-  phone: "",
-  avatar_url: "",
-};
-
-const ProfilePage = () => {
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(initialProfile);
+const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const [profile, setProfile] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    avatar_url: '',
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchProfile = async () => {
       setLoading(true);
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error || !user) {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError || !userData?.user) {
         setLoading(false);
-        setUser(null);
         return;
       }
-      setUser(user);
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
+      const userId = userData.user.id;
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
       setProfile({
-        first_name: profileData?.first_name || user.user_metadata?.given_name || "",
-        last_name: profileData?.last_name || user.user_metadata?.family_name || "",
-        email: user.email || "",
-        phone: profileData?.phone || "",
-        avatar_url: user.user_metadata?.avatar_url || profileData?.avatar_url || "",
+        first_name: data?.first_name || '',
+        last_name: data?.last_name || '',
+        email: userData.user.email || '',
+        phone: data?.phone || '',
+        avatar_url: data?.avatar_url || '',
       });
       setLoading(false);
     };
-    fetchUser();
+    fetchProfile();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setError("");
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({
-        id: user.id,
-        first_name: profile.first_name,
-        last_name: profile.last_name,
-        phone: profile.phone,
-        avatar_url: profile.avatar_url,
-      });
-    if (error) setError("Failed to save profile");
-    setSaving(false);
-  };
-
-  if (loading) return <div className="flex justify-center items-center h-40">Loading...</div>;
+  if (loading) return <div className="p-8 text-center">Loading...</div>;
 
   return (
-    <div className="max-w-md mx-auto p-4 w-full">
-      <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
-      <form className="space-y-4" onSubmit={handleSave}>
-        <div className="flex flex-col items-center mb-4">
-          <Avatar className="h-20 w-20 mb-2">
-            {profile.avatar_url ? (
-              <AvatarImage src={profile.avatar_url} alt="Profile" />
-            ) : (
-              <AvatarFallback>{profile.first_name?.[0] || "?"}</AvatarFallback>
-            )}
-          </Avatar>
-        </div>
-        <div className="flex gap-2">
-          <input
-            name="first_name"
-            value={profile.first_name}
-            onChange={handleChange}
-            placeholder="First Name"
-            className="flex-1 px-3 py-2 border rounded-md"
-            autoComplete="given-name"
-          />
-          <input
-            name="last_name"
-            value={profile.last_name}
-            onChange={handleChange}
-            placeholder="Last Name"
-            className="flex-1 px-3 py-2 border rounded-md"
-            autoComplete="family-name"
-          />
-        </div>
-        <input
-          name="email"
-          value={profile.email}
-          disabled
-          className="w-full px-3 py-2 border rounded-md bg-gray-100"
-          autoComplete="email"
+    <div className="max-w-md mx-auto p-4 sm:p-8 bg-white rounded-lg shadow-md mt-8">
+      <h2 className="text-2xl font-bold mb-4 text-center">Profile</h2>
+      <div className="flex flex-col items-center mb-4">
+        <img
+          src={profile.avatar_url || '/placeholder.svg'}
+          alt="Avatar"
+          className="w-20 h-20 rounded-full object-cover border mb-2"
         />
-        <input
-          name="phone"
-          value={profile.phone}
-          onChange={handleChange}
-          placeholder="Phone Number"
-          className="w-full px-3 py-2 border rounded-md"
-          autoComplete="tel"
-        />
-        {error && <div className="text-red-500 text-sm">{error}</div>}
-        <Button type="submit" className="w-full" disabled={saving}>
-          {saving ? "Saving..." : "Save"}
-        </Button>
-      </form>
+        <div className="font-semibold text-lg">{profile.first_name} {profile.last_name}</div>
+        <div className="text-gray-500 text-sm">{profile.email}</div>
+      </div>
+      <div className="space-y-2 mb-4">
+        <div><span className="font-medium">Phone:</span> {profile.phone || <span className="text-gray-400">Not set</span>}</div>
+      </div>
+      <button
+        onClick={() => navigate('/profile/edit')}
+        className="w-full py-2 px-4 bg-primary text-white rounded-md font-semibold shadow hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+      >
+        Edit Profile
+      </button>
     </div>
   );
 };

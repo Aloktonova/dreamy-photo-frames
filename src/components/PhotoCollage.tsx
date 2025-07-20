@@ -9,6 +9,7 @@ import FilterPanel from './FilterPanel';
 import BlenderPanel from './BlenderPanel';
 import DownloadModal from './DownloadModal';
 import ShareButtons from "./ShareButtons";
+import ShareModal from './ShareModal';
 import { 
   ArrowLeft, 
   Download, 
@@ -56,6 +57,7 @@ const PhotoCollage = () => {
   const [blenderPanelOpen, setBlenderPanelOpen] = useState(false);
   const [stickerPanelOpen, setStickerPanelOpen] = useState(false);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   
   // Editing states
   const [selectedFrame, setSelectedFrame] = useState<string>('');
@@ -172,7 +174,8 @@ const PhotoCollage = () => {
       const canvas = await html2canvas(collageElement);
       const dataUrl = canvas.toDataURL("image/png");
       setCollageImageUrl(dataUrl);
-      setDownloadModalOpen(true);
+      setDownloadModalOpen(false); // Close download modal if open
+      setShareModalOpen(true); // Open share modal
     }
   };
 
@@ -433,6 +436,12 @@ const PhotoCollage = () => {
         isOpen={downloadModalOpen}
         onClose={() => setDownloadModalOpen(false)}
         collageElementId="collage-canvas"
+      />
+
+      <ShareModal
+        open={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        imageUrl={collageImageUrl || ''}
       />
 
       {/* After the collage is saved and the preview is shown, render ShareButtons: */}

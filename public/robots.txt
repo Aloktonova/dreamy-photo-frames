@@ -13,4 +13,6 @@ Allow: /
 User-agent: *
 Allow: /
 
+Disallow: /profile
+
 Sitemap: https://dreamy-photo-frames.lovable.app/sitemap.xml

@@ -165,6 +165,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
         align="end"
         className="w-64 min-w-[12rem] bg-white text-gray-900 border border-gray-200 shadow-xl rounded-lg p-2 z-50"
         sideOffset={8}
+        style={{ background: '#fff', border: '1px solid #e5e7eb', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}
       >
         <div className="flex flex-col items-center mb-2">
           <Avatar className="h-16 w-16 mb-2">
@@ -180,13 +181,19 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => navigate('/profile')}
-          className="flex items-center gap-2 min-h-[44px] px-3 py-2 text-base rounded-md cursor-pointer hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition-colors"
+          className="flex items-center gap-2 min-h-[44px] px-3 py-2 text-base rounded-md cursor-pointer hover:bg-gray-100 focus:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
         >
           <User className="h-5 w-5" /> Profile
         </DropdownMenuItem>
         <DropdownMenuItem
+          onClick={() => navigate('/profile/edit')}
+          className="flex items-center gap-2 min-h-[44px] px-3 py-2 text-base rounded-md cursor-pointer hover:bg-gray-100 focus:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+        >
+          <span className="material-icons h-5 w-5">edit</span> Edit Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem
           onClick={() => navigate('/settings')}
-          className="flex items-center gap-2 min-h-[44px] px-3 py-2 text-base rounded-md cursor-pointer hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition-colors"
+          className="flex items-center gap-2 min-h-[44px] px-3 py-2 text-base rounded-md cursor-pointer hover:bg-gray-100 focus:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
         >
           <Settings className="h-5 w-5" /> Settings
         </DropdownMenuItem>
