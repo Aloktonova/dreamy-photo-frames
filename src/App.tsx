@@ -8,6 +8,8 @@ import Home from "./components/Home";
 import PhotoCollage from "./components/PhotoCollage";
 import EditPage from "./components/EditPage";
 import NotFound from "./pages/NotFound";
+import ProfilePage from "./pages/Profile";
+import SettingsPage from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,8 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/collage" element={<PhotoCollage />} />
           <Route path="/edit" element={<EditPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

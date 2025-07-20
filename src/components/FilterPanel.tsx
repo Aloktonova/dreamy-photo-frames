@@ -16,9 +16,10 @@ interface FilterPanelProps {
   isOpen: boolean;
   onClose: () => void;
   onFilterApply: (filters: FilterSettings) => void;
+  photoUrl: string; // NEW: thumbnail or main photo for live preview
 }
 
-const FilterPanel = ({ isOpen, onClose, onFilterApply }: FilterPanelProps) => {
+const FilterPanel = ({ isOpen, onClose, onFilterApply, photoUrl }: FilterPanelProps) => {
   const [filters, setFilters] = useState<FilterSettings>({
     brightness: 100,
     contrast: 100,
@@ -28,14 +29,26 @@ const FilterPanel = ({ isOpen, onClose, onFilterApply }: FilterPanelProps) => {
     blur: 0
   });
 
+  // New: expanded filter presets with more variety
   const presetFilters = [
     { name: 'Normal', values: { brightness: 100, contrast: 100, saturation: 100, sepia: 0, grayscale: 0, blur: 0 } },
     { name: 'Vintage', values: { brightness: 110, contrast: 120, saturation: 80, sepia: 30, grayscale: 0, blur: 0 } },
     { name: 'B&W', values: { brightness: 100, contrast: 110, saturation: 0, sepia: 0, grayscale: 100, blur: 0 } },
     { name: 'Bright', values: { brightness: 130, contrast: 110, saturation: 110, sepia: 0, grayscale: 0, blur: 0 } },
     { name: 'Soft', values: { brightness: 105, contrast: 90, saturation: 95, sepia: 0, grayscale: 0, blur: 1 } },
-    { name: 'Sepia', values: { brightness: 110, contrast: 100, saturation: 80, sepia: 80, grayscale: 0, blur: 0 } }
+    { name: 'Sepia', values: { brightness: 110, contrast: 100, saturation: 80, sepia: 80, grayscale: 0, blur: 0 } },
+    { name: 'Cool', values: { brightness: 100, contrast: 110, saturation: 120, sepia: 0, grayscale: 0, blur: 0 } },
+    { name: 'Warm', values: { brightness: 110, contrast: 105, saturation: 120, sepia: 20, grayscale: 0, blur: 0 } },
+    { name: 'Matte', values: { brightness: 105, contrast: 90, saturation: 90, sepia: 10, grayscale: 10, blur: 0 } },
+    { name: 'Drama', values: { brightness: 90, contrast: 140, saturation: 110, sepia: 0, grayscale: 0, blur: 0 } },
+    { name: 'Fade', values: { brightness: 110, contrast: 80, saturation: 80, sepia: 0, grayscale: 10, blur: 0 } },
+    { name: 'Glow', values: { brightness: 120, contrast: 90, saturation: 120, sepia: 0, grayscale: 0, blur: 2 } },
   ];
+
+  // Helper to get CSS filter string from values
+  function getCssFilterString(values: FilterSettings) {
+    return `brightness(${values.brightness}%) contrast(${values.contrast}%) saturate(${values.saturation}%) sepia(${values.sepia}%) grayscale(${values.grayscale}%) blur(${values.blur}px)`;
+  }
 
   const handleFilterChange = (filterType: keyof FilterSettings, value: number[]) => {
     const newFilters = { ...filters, [filterType]: value[0] };
@@ -77,16 +90,24 @@ const FilterPanel = ({ isOpen, onClose, onFilterApply }: FilterPanelProps) => {
 
           {/* Preset Filters */}
           <div className="mb-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Quick Presets</h3>
-            <div className="grid grid-cols-3 gap-2">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Filter Presets</h3>
+            <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar">
               {presetFilters.map((preset) => (
                 <button
                   key={preset.name}
                   onClick={() => applyPreset(preset)}
-                  className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-center"
+                  className="flex flex-col items-center min-w-[72px] max-w-[80px] focus:outline-none group"
+                  tabIndex={0}
+                  aria-label={preset.name}
                 >
-                  <div className="w-full h-12 bg-gradient-to-r from-gray-200 to-gray-300 rounded mb-2"></div>
-                  <span className="text-xs font-medium text-gray-700">{preset.name}</span>
+                  <div className="w-16 h-16 rounded-lg overflow-hidden border-2 border-transparent group-hover:border-blue-400 mb-1 shadow">
+                    <img
+                      src={photoUrl}
+                      alt={preset.name + ' preview'}
+                      style={{ filter: getCssFilterString(preset.values), objectFit: 'cover', width: '100%', height: '100%' }}
+                    />
+                  </div>
+                  <span className="text-xs font-medium text-gray-700 truncate w-full text-center">{preset.name}</span>
                 </button>
               ))}
             </div>

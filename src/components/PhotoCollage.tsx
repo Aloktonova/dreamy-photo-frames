@@ -8,6 +8,7 @@ import InteractiveStickerPanel from './InteractiveStickerPanel';
 import FilterPanel from './FilterPanel';
 import BlenderPanel from './BlenderPanel';
 import DownloadModal from './DownloadModal';
+import ShareButtons from "./ShareButtons";
 import { 
   ArrowLeft, 
   Download, 
@@ -27,6 +28,7 @@ import { Theme } from '@/types/styles';
 import { LayoutTemplate } from '@/data/layoutTemplates';
 import { aiLayoutGenerator } from './AILayoutGenerator';
 import LayoutSelector from './LayoutSelector';
+import html2canvas from "html2canvas";
 
 const PhotoCollage = () => {
   const navigate = useNavigate();
@@ -74,6 +76,7 @@ const PhotoCollage = () => {
     grayscale: 0,
     blur: 0
   });
+  const [collageImageUrl, setCollageImageUrl] = useState<string | null>(null);
 
   // Get themed collage background
   const getCollageBackground = () => {
@@ -163,6 +166,16 @@ const PhotoCollage = () => {
     setStickerPanelOpen(false);
   };
 
+  const handleSaveCollage = async () => {
+    const collageElement = document.getElementById("collage-canvas");
+    if (collageElement) {
+      const canvas = await html2canvas(collageElement);
+      const dataUrl = canvas.toDataURL("image/png");
+      setCollageImageUrl(dataUrl);
+      setDownloadModalOpen(true);
+    }
+  };
+
   // Bottom toolbar tools arranged in 2 rows
   const toolsRow1 = [
     {
@@ -248,7 +261,7 @@ const PhotoCollage = () => {
               <Crown size={18} className="sm:size-[20px]" />
             </button>
             <button
-              onClick={() => setDownloadModalOpen(true)}
+              onClick={handleSaveCollage}
               className="bg-blue-500 text-white px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-1 sm:gap-2"
             >
               <Download size={14} className="sm:size-[16px]" />
@@ -421,6 +434,19 @@ const PhotoCollage = () => {
         onClose={() => setDownloadModalOpen(false)}
         collageElementId="collage-canvas"
       />
+
+      {/* After the collage is saved and the preview is shown, render ShareButtons: */}
+      {downloadModalOpen && collageImageUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 flex flex-col items-center">
+            {/* Collage preview image */}
+            <img src={collageImageUrl} alt="Collage Preview" className="w-full max-w-xs rounded-lg mb-4 shadow" />
+            <ShareButtons imageUrl={collageImageUrl} />
+            <div className="text-xs text-gray-500 mt-2">For Instagram: Download and upload this image in your Instagram app.</div>
+            <button onClick={() => setDownloadModalOpen(false)} className="mt-4 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

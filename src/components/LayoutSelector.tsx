@@ -8,12 +8,29 @@ interface LayoutSelectorProps {
   onSelectLayout: (layout: LayoutTemplate) => void;
   isOpen: boolean;
   onClose: () => void;
+  selectedPhotoCount: number; // NEW: number of images user has selected
 }
 
-const LayoutSelector = ({ currentLayout, onSelectLayout, isOpen, onClose }: LayoutSelectorProps) => {
+const categoryOrder = [
+  'Grid', 'Asymmetric', 'Magazine', 'Shape', 'Classic', 'Creative', 'Event', 'Social'
+];
+
+const LayoutSelector = ({ currentLayout, onSelectLayout, isOpen, onClose, selectedPhotoCount }: LayoutSelectorProps) => {
   if (!isOpen) return null;
 
+  // Group templates by category
+  const groupedTemplates = layoutTemplates.reduce((acc, layout) => {
+    const cat = layout.category || 'Other';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(layout);
+    return acc;
+  }, {} as Record<string, LayoutTemplate[]>);
+
   const handleLayoutSelect = (layout: LayoutTemplate) => {
+    if (selectedPhotoCount > (layout.maxPhotos || 99)) {
+      alert(`This layout supports up to ${layout.maxPhotos} photos. Please remove some images or choose a different layout.`);
+      return;
+    }
     onSelectLayout(layout);
     onClose();
   };
@@ -35,120 +52,75 @@ const LayoutSelector = ({ currentLayout, onSelectLayout, isOpen, onClose }: Layo
             </button>
           </div>
         </div>
-        
         <div className="p-6 overflow-y-auto max-h-[65vh]">
-          {/* Free Layouts */}
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Free Layouts</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {layoutTemplates.filter(layout => !layout.isPro).map((layout) => (
-                <button
-                  key={layout.id}
-                  onClick={() => handleLayoutSelect(layout)}
-                  className={`group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-all duration-300 hover:scale-105 border-2 ${
-                    currentLayout?.id === layout.id 
-                      ? 'border-blue-500 bg-blue-50' 
-                      : 'border-transparent'
-                  }`}
-                >
-                  <div 
-                    className="layout-thumbnail relative w-full aspect-square bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden grid gap-1 p-1"
-                    style={{
-                      gridTemplateColumns: `repeat(${layout.gridColumns}, 1fr)`,
-                      gridTemplateRows: `repeat(${layout.gridRows}, 1fr)`
-                    }}
-                  >
-                    {layout.cells.map((cell, idx) => (
+          {categoryOrder.map((cat) => groupedTemplates[cat] && (
+            <div key={cat} className="mb-10">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 capitalize">{cat} Layouts</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+                {groupedTemplates[cat].map((layout) => {
+                  const disabled = selectedPhotoCount > (layout.maxPhotos || 99);
+                  return (
+                    <button
+                      key={layout.id}
+                      onClick={() => handleLayoutSelect(layout)}
+                      disabled={disabled}
+                      className={`group relative bg-gray-50 rounded-xl p-3 hover:bg-blue-50 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all duration-300 hover:scale-105 border-2 ${
+                        currentLayout?.id === layout.id
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-transparent'
+                      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      aria-label={layout.name}
+                      tabIndex={0}
+                    >
                       <div
-                        key={idx}
-                        className="cell-preview bg-gradient-to-br from-blue-200 to-blue-300 border border-blue-400 rounded-sm"
+                        className="layout-thumbnail relative w-full aspect-square bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden grid gap-1 p-1"
                         style={{
-                          gridColumn: `${cell.gridColumn} / span ${cell.gridColumnSpan}`,
-                          gridRow: `${cell.gridRow} / span ${cell.gridRowSpan}`
+                          gridTemplateColumns: `repeat(${layout.gridColumns}, 1fr)`,
+                          gridTemplateRows: `repeat(${layout.gridRows}, 1fr)`
                         }}
-                      />
-                    ))}
-                    
-                    {/* Icon overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/5 group-hover:bg-black/10 transition-colors">
-                      <span className="text-lg opacity-60 group-hover:opacity-80">
-                        {layout.icon}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <span className="text-xs font-medium text-gray-700 block truncate">{layout.name}</span>
-                    <span className="text-xs text-gray-500">{layout.cells.length} photos</span>
-                  </div>
-                  
-                  {currentLayout?.id === layout.id && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs">✓</span>
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Pro Layouts */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              Pro Layouts 
-              <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium">PRO</span>
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {layoutTemplates.filter(layout => layout.isPro).map((layout) => (
-                <button
-                  key={layout.id}
-                  onClick={() => handleLayoutSelect(layout)}
-                  className={`group relative bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-all duration-300 hover:scale-105 border-2 ${
-                    currentLayout?.id === layout.id 
-                      ? 'border-orange-500 bg-orange-50' 
-                      : 'border-transparent'
-                  }`}
-                >
-                  <div 
-                    className="layout-thumbnail relative w-full aspect-square bg-white rounded-lg border border-gray-200 mb-2 overflow-hidden grid gap-1 p-1"
-                    style={{
-                      gridTemplateColumns: `repeat(${layout.gridColumns}, 1fr)`,
-                      gridTemplateRows: `repeat(${layout.gridRows}, 1fr)`
-                    }}
-                  >
-                    {layout.cells.map((cell, idx) => (
-                      <div
-                        key={idx}
-                        className="cell-preview bg-gradient-to-br from-orange-200 to-orange-300 border border-orange-400 rounded-sm"
-                        style={{
-                          gridColumn: `${cell.gridColumn} / span ${cell.gridColumnSpan}`,
-                          gridRow: `${cell.gridRow} / span ${cell.gridRowSpan}`
-                        }}
-                      />
-                    ))}
-                    
-                    {/* Pro Lock Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
-                      <div className="bg-white rounded-full p-2 shadow-lg">
-                        <Lock size={14} className="text-orange-500" />
+                      >
+                        {layout.cells.map((cell, idx) => (
+                          <div
+                            key={idx}
+                            className="cell-preview bg-gradient-to-br from-blue-200 to-blue-300 border border-blue-400 rounded-sm"
+                            style={{
+                              gridColumn: `${cell.gridColumn} / span ${cell.gridColumnSpan}`,
+                              gridRow: `${cell.gridRow} / span ${cell.gridRowSpan}`
+                            }}
+                          />
+                        ))}
+                        {/* Icon overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/5 group-hover:bg-black/10 transition-colors">
+                          <span className="text-lg opacity-60 group-hover:opacity-80">
+                            {layout.icon}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <span className="text-xs font-medium text-gray-700 block truncate">{layout.name}</span>
-                    <span className="text-xs text-orange-500 font-medium">PRO</span>
-                  </div>
-                  
-                  {currentLayout?.id === layout.id && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs">✓</span>
-                    </div>
-                  )}
-                </button>
-              ))}
+                      <div className="text-center">
+                        <span className="text-xs font-medium text-gray-700 block truncate">{layout.name}</span>
+                        <span className="text-xs text-gray-500">{layout.maxPhotos} photos</span>
+                      </div>
+                      {/* Highlight new/featured */}
+                      {layout.id.startsWith('new-') && (
+                        <span className="absolute top-2 left-2 bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">NEW</span>
+                      )}
+                      {layout.isPro && (
+                        <span className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">PRO</span>
+                      )}
+                      {disabled && (
+                        <span className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold">Too many photos</span>
+                      )}
+                      {currentLayout?.id === layout.id && (
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">✓</span>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
