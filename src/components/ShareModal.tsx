@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
-import { Facebook, Instagram, Download, Printer, Share2, X, Whatsapp } from 'lucide-react';
+import { Facebook, Instagram, Download, Printer, Share2, X, WhatsApp } from 'lucide-react';
 
 interface ShareModalProps {
   open: boolean;
@@ -12,7 +12,7 @@ interface ShareModalProps {
 const shareOptions = [
   {
     label: 'WhatsApp',
-    icon: <Whatsapp className="w-8 h-8 text-green-500" />,
+    icon: <WhatsApp className="w-8 h-8 text-green-500" />,
     handler: (imageUrl: string, caption: string) => {
       const text = encodeURIComponent((caption || '') + ' ' + imageUrl);
       window.open(`https://wa.me/?text=${text}`, '_blank');

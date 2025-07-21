@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Star, Heart, Smile, Cloud, Sparkles, Sun, Moon, Music, Camera, Flower, ThumbsUp, Leaf, Gift, PartyPopper, Plus, Search, Clock, Folder, ChevronDown, ChevronUp } from 'lucide-react';
+import { Star, Heart, Smile, Cloud, Sparkles, Sun, Moon, Music, Camera, Flower, ThumbsUp, Leaf, Gift, PartyPopper, Plus, Search, Clock, Folder, ChevronDown, ChevronUp, WhatsApp } from 'lucide-react';
 import { HelmetProvider } from 'react-helmet-async';
 
 // 1. Unified sticker & emoji data
