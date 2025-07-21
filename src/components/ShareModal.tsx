@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
-import { Facebook, Instagram, Download, Printer, Share2, X, MessageCircle } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
+import { Facebook, Instagram, Download, Printer, Share2, X } from 'lucide-react';
 
 interface ShareModalProps {
   open: boolean;
@@ -12,7 +13,7 @@ interface ShareModalProps {
 const shareOptions = [
   {
     label: 'WhatsApp',
-    icon: <MessageCircle className="w-8 h-8 text-green-500" />,
+    icon: <FaWhatsapp className="w-8 h-8 text-green-500" />,
     handler: (imageUrl: string, caption: string) => {
       const text = encodeURIComponent((caption || '') + ' ' + imageUrl);
       window.open(`https://wa.me/?text=${text}`, '_blank');
