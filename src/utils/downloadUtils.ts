@@ -83,8 +83,8 @@ export const downloadCollageAsImage = async (
         // Ignore elements that shouldn't be in the download
         return el.classList.contains('download-ignore') || 
                el.classList.contains('opacity-0') ||
-               el.style.display === 'none' ||
-               el.style.visibility === 'hidden';
+                (el as HTMLElement).style.display === 'none' ||
+                (el as HTMLElement).style.visibility === 'hidden';
       },
       onclone: (clonedDoc) => {
         // Ensure cloned element has proper styling

@@ -172,6 +172,7 @@ const CollageToolbar = ({
         onSelectLayout={onLayoutChange}
         isOpen={layoutSelectorOpen}
         onClose={() => setLayoutSelectorOpen(false)}
+        selectedPhotoCount={0}
       />
     </>
   );

@@ -98,7 +98,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
   // Social linking
   const handleLinkSocial = async (provider: string) => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider });
+      const { error } = await supabase.auth.signInWithOAuth({ provider: provider as any });
       if (error) throw error;
       toast({ title: `Linked with ${provider.charAt(0).toUpperCase() + provider.slice(1)}` });
     } catch (err: any) {

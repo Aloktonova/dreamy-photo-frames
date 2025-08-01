@@ -387,6 +387,7 @@ const PhotoCollage = () => {
         onSelectLayout={applyLayoutTemplate}
         isOpen={layoutSelectorOpen}
         onClose={() => setLayoutSelectorOpen(false)}
+        selectedPhotoCount={Object.keys(photos).length}
       />
 
       <FrameCustomizationPanel
@@ -415,6 +416,7 @@ const PhotoCollage = () => {
         onFilterApply={(filters) => {
           setCollageFilters(filters);
         }}
+        photoUrl={Object.values(photos)[0]?.file ? URL.createObjectURL(Object.values(photos)[0].file!) : "https://via.placeholder.com/300x200"}
       />
 
       <BlenderPanel
