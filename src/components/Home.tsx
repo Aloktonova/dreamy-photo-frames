@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User } from '@supabase/supabase-js';
 import { 
   LayoutGrid, 
   Wand2, 
@@ -27,24 +26,17 @@ import {
   Zap as ZapIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/integrations/supabase/client';
-import AuthBlock from './AuthBlock';
+// AuthBlock import removed - using auth context instead
 import Navbar from './Navbar';
 import Footer from './Footer';
+import BottomNavBar from './BottomNavBar';
 import { useToast } from '@/components/ui/use-toast';
-import { useSignOut } from '@/hooks/useSignOut';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
+  const { user, login, logout } = useAuth();
   const { toast } = useToast();
-  const signOut = useSignOut(() => setUser(null));
-
-  const handleAuthenticated = (authenticatedUser: User) => {
-    setUser(authenticatedUser);
-  };
-
-  const handleSignOut = signOut;
 
   useEffect(() => {
     if (user) {
@@ -124,53 +116,52 @@ const Home = () => {
 
   return (
     <>
-      <Navbar user={user} onLogout={handleSignOut} />
+      <Navbar user={user} onLogout={logout} onLogin={login} />
       
       {/* Hero Section */}
-      <section className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 dark:from-blue-900 dark:via-purple-900 dark:to-blue-950 flex items-center relative overflow-hidden transition-colors duration-300">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-32 h-32 bg-white rounded-full"></div>
-          <div className="absolute bottom-20 right-20 w-24 h-24 bg-white rounded-full"></div>
-          <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-white rounded-full"></div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 relative z-10">
-          <div className="text-center text-white">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              Where heart meets art
+      <section className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-800 dark:via-purple-900/20 dark:to-blue-900/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6">
+              Transform Your Photos with
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"> AI Magic</span>
             </h1>
-            
-            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Dreamy makes it easy to create and share beautiful photo frames.
+            <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-4xl mx-auto mb-8">
+              Create stunning photo frames and collages with our AI-powered tools. 
+              From simple enhancements to complex designs, Dreamy makes it effortless.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <Button 
-                onClick={handleGetStarted}
-                size="lg" 
-                className="bg-white text-blue-600 hover:bg-gray-100 dark:bg-white dark:text-blue-600 dark:hover:bg-gray-100 px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
-              >
-                Start Designing
-              </Button>
-            </div>
-
-            {/* Preview Area */}
-            <div className="relative max-w-4xl mx-auto">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                <div className="text-center text-white">
-                  <h3 className="text-2xl font-bold mb-2">Dil se, design tak</h3>
-                  <p className="text-lg text-white/80">A Film by Dreamy</p>
-                </div>
-                {/* Placeholder for video/image preview */}
-                <div className="mt-6 bg-white/20 rounded-xl h-48 flex items-center justify-center">
-                  <div className="text-white/60 text-center">
-                    <Camera size={48} className="mx-auto mb-4" />
-                    <p>Video Preview Area</p>
-                  </div>
-                </div>
+            {!user && (
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button 
+                  onClick={() => navigate('/collage')}
+                  size="lg" 
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Start Creating
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  onClick={login}
+                  className="border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white px-8 py-4 text-lg rounded-full transition-all duration-300"
+                >
+                  Sign In
+                </Button>
               </div>
-            </div>
+            )}
+            
+            {user && (
+              <Button 
+                onClick={() => navigate('/collage')}
+                size="lg" 
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Continue Creating
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            )}
           </div>
         </div>
       </section>
@@ -327,13 +318,24 @@ const Home = () => {
             
             <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg transition-colors duration-300">
               <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Get Started Today</h3>
-              <AuthBlock onAuthenticated={handleAuthenticated} />
+              <div className="text-center">
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  Sign in to access all features and save your creations
+                </p>
+                <Button 
+                  onClick={login}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-full"
+                >
+                  Sign In to Continue
+                </Button>
+              </div>
             </div>
           </div>
         </section>
       )}
 
       <Footer />
+      {user && <BottomNavBar />}
     </>
   );
 };

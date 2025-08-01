@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Menu, X, Sun, Moon } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import UserDropdown from "./UserDropdown";
 import { useDarkMode } from "@/hooks/useDarkMode";
@@ -7,16 +8,31 @@ import { useDarkMode } from "@/hooks/useDarkMode";
 interface NavbarProps {
   user: any;
   onLogout: () => void;
+  onLogin?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
+const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onLogin }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
   const { isDark, toggleDarkMode } = useDarkMode();
+
+  const handleLoginClick = async () => {
+    if (onLogin) {
+      setIsLoginLoading(true);
+      try {
+        await onLogin();
+      } finally {
+        setIsLoginLoading(false);
+      }
+    }
+  };
 
   return (
     <header className="w-full flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 transition-colors duration-300">
-      {/* Logo */}
-      <div className="text-2xl font-bold text-gray-800 dark:text-white">Dreamy</div>
+      {/* Logo - Now clickable and links to home */}
+      <Link to="/" className="text-2xl font-bold text-gray-800 dark:text-white hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+        Dreamy
+      </Link>
       
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-4">
@@ -40,8 +56,13 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
             onLogout={onLogout}
           />
         ) : (
-          <Button variant="outline" className="rounded-full dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800">
-            Log in
+          <Button 
+            variant="outline" 
+            className="rounded-full dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+            onClick={handleLoginClick}
+            disabled={isLoginLoading}
+          >
+            {isLoginLoading ? "Loading..." : "Log in"}
           </Button>
         )}
       </div>
@@ -84,8 +105,13 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
                 </Button>
               </div>
             ) : (
-              <Button variant="outline" className="w-full rounded-full dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800">
-                Log in
+              <Button 
+                variant="outline" 
+                className="w-full rounded-full dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                onClick={handleLoginClick}
+                disabled={isLoginLoading}
+              >
+                {isLoginLoading ? "Loading..." : "Log in"}
               </Button>
             )}
           </div>

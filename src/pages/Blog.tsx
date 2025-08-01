@@ -11,12 +11,17 @@ import {
   Zap,
   Camera,
   Share2,
-  Star
+  Star,
+  ArrowLeft
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import BottomNavBar from '@/components/BottomNavBar';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Blog = () => {
+  const { user, login, logout } = useAuth();
+
   const blogPosts = [
     {
       id: 1,
@@ -75,7 +80,20 @@ const Blog = () => {
 
   return (
     <>
-      <Navbar user={null} onLogout={() => {}} />
+      <Navbar user={user} onLogout={logout} onLogin={login} />
+      
+      {/* Back to Home Button - Prominent placement */}
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium transition-colors"
+          >
+            <ArrowLeft size={20} />
+            Back to Home
+          </Link>
+        </div>
+      </div>
       
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-800 dark:via-purple-900/20 dark:to-blue-900/20">
@@ -219,6 +237,7 @@ const Blog = () => {
       </section>
 
       <Footer />
+      {user && <BottomNavBar />}
     </>
   );
 };
