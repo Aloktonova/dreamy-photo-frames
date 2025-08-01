@@ -84,7 +84,7 @@ const Home = () => {
     if (user) {
       navigate('/collage');
     } else {
-      login();
+      navigate('/collage'); // Allow users to access the app without login
     }
   };
 

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { filterPresets } from '@/data/filterPresets';
-import { Undo2, Redo2, RefreshCw, Eye, EyeOff, Brush, Info } from 'lucide-react';
+import { Undo2, Redo2, RefreshCw, Eye, EyeOff, Brush, Info, Filter, X } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 
 interface FilterSettings {
