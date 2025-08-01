@@ -109,8 +109,7 @@ const Home = () => {
     if (user) {
       navigate('/collage');
     } else {
-      // Scroll to auth section
-      document.getElementById('auth-section')?.scrollIntoView({ behavior: 'smooth' });
+      login();
     }
   };
 
@@ -134,20 +133,12 @@ const Home = () => {
             {!user && (
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button 
-                  onClick={() => navigate('/collage')}
+                  onClick={login}
                   size="lg" 
                   className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Start Creating
                   <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  onClick={login}
-                  className="border-2 border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white px-8 py-4 text-lg rounded-full transition-all duration-300"
-                >
-                  Sign In
                 </Button>
               </div>
             )}
@@ -305,34 +296,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Authentication Section - Only show if user is not logged in */}
-      {!user && (
-        <section id="auth-section" className="py-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 transition-colors duration-300">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              Ready to Create Something Amazing?
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Join thousands of users who are already creating stunning photos with Dreamy
-            </p>
-            
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg transition-colors duration-300">
-              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Get Started Today</h3>
-              <div className="text-center">
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Sign in to access all features and save your creations
-                </p>
-                <Button 
-                  onClick={login}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-full"
-                >
-                  Sign In to Continue
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+
 
       <Footer />
       {user && <BottomNavBar />}
