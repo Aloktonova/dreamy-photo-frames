@@ -10,14 +10,16 @@
     rows = e.detail.rows;
     cols = e.detail.cols;
   }
+
+  let editorCanvasRef;
 </script>
 
 <div class="flex flex-col h-screen">
   <TopBar on:templateSelect={handleTemplateSelect} />
   <div class="flex flex-1 overflow-hidden">
-    <Sidebar />
+    <Sidebar editorCanvasRef={editorCanvasRef} />
     <main class="flex-1 flex flex-col overflow-auto">
-      <EditorCanvas {rows} {cols} />
+      <EditorCanvas bind:this={editorCanvasRef} {rows} {cols} />
     </main>
   </div>
 </div>
