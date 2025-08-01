@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import ProfilePage from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Settings from "./pages/Settings";
+import Blog from "./pages/Blog";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/collage" element={<PhotoCollage />} />
           <Route path="/edit" element={<EditPage />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/settings" element={<Settings />} />

@@ -20,7 +20,11 @@ import {
   CheckCircle,
   Play,
   Users,
-  Zap
+  Zap,
+  Plus,
+  Sparkles as SparklesIcon,
+  Heart,
+  Zap as ZapIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -52,26 +56,21 @@ const Home = () => {
     }
   }, [user, toast]);
 
-  const features = [
+  const mainFeatures = [
     {
-      icon: LayoutGrid,
-      title: "Photo Collages",
-      description: "Create stunning multi-photo layouts with our intuitive drag-and-drop editor"
+      icon: Plus,
+      title: "Add Frame",
+      description: "Choose from hundreds of beautiful frames to enhance your photos"
     },
     {
-      icon: Wand2,
-      title: "AI Enhancement",
-      description: "Automatically improve photo quality, remove backgrounds, and apply smart filters"
+      icon: SparklesIcon,
+      title: "AI Suggestions",
+      description: "Get intelligent recommendations for the perfect frame and style"
     },
     {
-      icon: Palette,
-      title: "Custom Frames",
-      description: "Choose from hundreds of beautiful frames or create your own custom designs"
-    },
-    {
-      icon: Download,
-      title: "High-Quality Export",
-      description: "Download your creations in high resolution for printing or sharing"
+      icon: Share2,
+      title: "Share",
+      description: "Share your creations directly to social media platforms"
     }
   ];
 
@@ -128,315 +127,211 @@ const Home = () => {
       <Navbar user={user} onLogout={handleSignOut} />
       
       {/* Hero Section */}
-      <section className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full border border-white/30 text-sm text-gray-700 mb-6">
-              <Sparkles size={16} className="text-purple-500" />
-              Transform Your Photos with AI-Powered Tools
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
-              Dreamy Photo Frames
+      <section className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-blue-800 dark:from-blue-900 dark:via-purple-900 dark:to-blue-950 flex items-center relative overflow-hidden transition-colors duration-300">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-32 h-32 bg-white rounded-full"></div>
+          <div className="absolute bottom-20 right-20 w-24 h-24 bg-white rounded-full"></div>
+          <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-white rounded-full"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 relative z-10">
+          <div className="text-center text-white">
+            <h1 className="text-5xl md:text-7xl font-bold mb-6">
+              Where heart meets art
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Create stunning photo collages, apply beautiful frames, and enhance your images with professional-grade tools. 
-              Perfect for social media, printing, or preserving memories.
+            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8 leading-relaxed">
+              Dreamy makes it easy to create and share beautiful photo frames.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Button 
                 onClick={handleGetStarted}
                 size="lg" 
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                className="bg-white text-blue-600 hover:bg-gray-100 dark:bg-white dark:text-blue-600 dark:hover:bg-gray-100 px-8 py-4 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
               >
-                <Play className="mr-2 h-5 w-5" />
-                Get Started Free
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="px-8 py-4 text-lg rounded-full border-2 hover:bg-white/50"
-                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Learn More
+                Start Designing
               </Button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600 mb-2">10K+</div>
-                <div className="text-gray-600">Happy Users</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-pink-600 mb-2">50K+</div>
-                <div className="text-gray-600">Photos Enhanced</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600 mb-2">100+</div>
-                <div className="text-gray-600">Frame Templates</div>
+            {/* Preview Area */}
+            <div className="relative max-w-4xl mx-auto">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                <div className="text-center text-white">
+                  <h3 className="text-2xl font-bold mb-2">Dil se, design tak</h3>
+                  <p className="text-lg text-white/80">A Film by Dreamy</p>
+                </div>
+                {/* Placeholder for video/image preview */}
+                <div className="mt-6 bg-white/20 rounded-xl h-48 flex items-center justify-center">
+                  <div className="text-white/60 text-center">
+                    <Camera size={48} className="mx-auto mb-4" />
+                    <p>Video Preview Area</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-white">
+      {/* About Section */}
+      <section className="py-20 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-800 dark:via-purple-900/20 dark:to-blue-900/20 transition-colors duration-300">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center">
+              <Heart size={32} className="text-white" />
+            </div>
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+            About Dreamy
+          </h2>
+          
+          <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
+            Dreamy Photo Frames is an AI-powered tool that empowers users to create, customize, and share stunning photo frames in seconds. Whether you're celebrating a special moment or designing social media visuals, Dreamy gives you creative freedom with ease.
+          </p>
+          
+          <div className="grid md:grid-cols-3 gap-8 mt-12">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <ZapIcon size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Lightning Fast</h3>
+              <p className="text-gray-600 dark:text-gray-400">Create beautiful frames in seconds with our intuitive AI</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-orange-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Sparkles size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">AI-Powered</h3>
+              <p className="text-gray-600 dark:text-gray-400">Smart suggestions and automatic enhancements</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Share2 size={24} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Easy Sharing</h3>
+              <p className="text-gray-600 dark:text-gray-400">Share your creations directly to social media</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content Section */}
+      <section className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need to Create Amazing Photos
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Explore Dreamy's Templates and AI
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From simple collages to professional photo editing, we've got all the tools you need
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Discover powerful tools to transform your photos into stunning creations
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => {
+          {/* Main Features Grid */}
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {mainFeatures.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
                 <div key={index} className="text-center group">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                    <IconComponent size={32} className="text-white" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                    <IconComponent size={40} className="text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">{feature.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">{feature.description}</p>
                 </div>
               );
             })}
           </div>
-        </div>
-      </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 bg-gradient-to-br from-purple-50 to-pink-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              How It Works
-            </h2>
-            <p className="text-xl text-gray-600">
-              Get started in just three simple steps
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
-                1
+          {/* Quick Modes Section - Only show if user is logged in */}
+          {user && (
+            <div className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-3xl p-8 transition-colors duration-300">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Quick Start Modes</h3>
+                <p className="text-gray-600 dark:text-gray-300">Jump straight into your preferred editing style</p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Upload Photos</h3>
-              <p className="text-gray-600">Drag and drop your photos or click to browse from your device</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-pink-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
-                2
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Customize & Edit</h3>
-              <p className="text-gray-600">Choose layouts, add frames, and enhance with our powerful tools</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
-                3
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Download & Share</h3>
-              <p className="text-gray-600">Export in high quality and share directly to social media</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Quick Modes Section - Only show if user is logged in */}
-      {user && (
-        <section className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Quick Start Modes
-              </h2>
-              <p className="text-xl text-gray-600">
-                Jump straight into your preferred editing style
-              </p>
-            </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {quickModes.map((mode) => {
+                  const IconComponent = mode.icon;
+                  return (
+                    <button
+                      key={mode.id}
+                      onClick={() => handleModeSelect(mode.id)}
+                      className="group relative bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-200 dark:border-gray-700 text-left"
+                    >
+                      <div className={`w-12 h-12 bg-gradient-to-br ${mode.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                        <IconComponent size={24} className="text-white" />
+                      </div>
+                      <h4 className="font-semibold text-gray-800 dark:text-white mb-2">{mode.name}</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{mode.description}</p>
+                    </button>
+                  );
+                })}
+              </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {quickModes.map((mode) => {
-                const IconComponent = mode.icon;
-                return (
-                  <button
-                    key={mode.id}
-                    onClick={() => handleModeSelect(mode.id)}
-                    className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-200 text-left"
-                  >
-                    <div className={`w-12 h-12 bg-gradient-to-br ${mode.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                      <IconComponent size={24} className="text-white" />
+              {/* Main Action Buttons for logged in users */}
+              <div className="grid md:grid-cols-2 gap-6 mt-12">
+                <button
+                  onClick={() => handleModeSelect('collage')}
+                  className="group relative bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
+                >
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <LayoutGrid size={32} className="text-white" />
                     </div>
-                    <h4 className="font-semibold text-gray-800 mb-2">{mode.name}</h4>
-                    <p className="text-sm text-gray-600">{mode.description}</p>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Main Action Buttons for logged in users */}
-            <div className="grid md:grid-cols-2 gap-6 mt-12">
-              <button
-                onClick={() => handleModeSelect('collage')}
-                className="group relative bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <LayoutGrid size={32} className="text-white" />
+                    <ArrowRight size={24} className="text-white/80 group-hover:text-white group-hover:translate-x-1 transition-all" />
                   </div>
-                  <ArrowRight size={24} className="text-white/80 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                </div>
-                <h2 className="text-2xl font-bold mb-2">Collage Maker</h2>
-                <p className="text-white/90">
-                  Create beautiful photo collages with grid layouts, freestyle arrangements, and creative templates
-                </p>
-              </button>
+                  <h2 className="text-2xl font-bold mb-2">Collage Maker</h2>
+                  <p className="text-white/90">
+                    Create beautiful photo collages with grid layouts, freestyle arrangements, and creative templates
+                  </p>
+                </button>
 
-              <button
-                onClick={() => handleModeSelect('edit')}
-                className="group relative bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Wand2 size={32} className="text-white" />
+                <button
+                  onClick={() => handleModeSelect('edit')}
+                  className="group relative bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]"
+                >
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Wand2 size={32} className="text-white" />
+                    </div>
+                    <ArrowRight size={24} className="text-white/80 group-hover:text-white group-hover:translate-x-1 transition-all" />
                   </div>
-                  <ArrowRight size={24} className="text-white/80 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                </div>
-                <h2 className="text-2xl font-bold mb-2">Photo Editor</h2>
-                <p className="text-white/90">
-                  Enhance your photos with advanced editing tools, filters, and AI-powered features
-                </p>
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Loved by Photographers Worldwide
-            </h2>
-            <p className="text-xl text-gray-600">
-              See what our users are saying about Dreamy Photo Frames
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <div className="flex items-center mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={20} className="text-yellow-400 fill-current" />
-                ))}
+                  <h2 className="text-2xl font-bold mb-2">Photo Editor</h2>
+                  <p className="text-white/90">
+                    Enhance your photos with advanced editing tools, filters, and AI-powered features
+                  </p>
+                </button>
               </div>
-              <p className="text-gray-600 mb-4">
-                "Amazing tool! I use it for all my social media content. The AI enhancement features are incredible."
-              </p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold">
-                  S
-                </div>
-                <div className="ml-3">
-                  <div className="font-semibold text-gray-900">Sarah M.</div>
-                  <div className="text-sm text-gray-500">Photographer</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <div className="flex items-center mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={20} className="text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <p className="text-gray-600 mb-4">
-                "The collage templates are perfect for creating family photo albums. Highly recommended!"
-              </p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-semibold">
-                  M
-                </div>
-                <div className="ml-3">
-                  <div className="font-semibold text-gray-900">Mike R.</div>
-                  <div className="text-sm text-gray-500">Designer</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <div className="flex items-center mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={20} className="text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <p className="text-gray-600 mb-4">
-                "Fast, intuitive, and the results are professional quality. Best photo editor I've used!"
-              </p>
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-semibold">
-                  L
-                </div>
-                <div className="ml-3">
-                  <div className="font-semibold text-gray-900">Lisa K.</div>
-                  <div className="text-sm text-gray-500">Content Creator</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to Create Something Amazing?
-          </h2>
-          <p className="text-xl text-white/90 mb-8">
-            Join thousands of users who are already creating stunning photos with Dreamy Photo Frames
-          </p>
-          
-          {!user ? (
-            <div id="auth-section" className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-              <h3 className="text-2xl font-semibold text-white mb-4">Get Started Today</h3>
-              <AuthBlock onAuthenticated={handleAuthenticated} />
-            </div>
-          ) : (
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                onClick={() => handleModeSelect('collage')}
-                size="lg" 
-                className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 text-lg rounded-full shadow-lg"
-              >
-                <LayoutGrid className="mr-2 h-5 w-5" />
-                Start Creating
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg rounded-full"
-                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Learn More
-              </Button>
             </div>
           )}
         </div>
       </section>
+
+      {/* Authentication Section - Only show if user is not logged in */}
+      {!user && (
+        <section id="auth-section" className="py-20 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 transition-colors duration-300">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
+              Ready to Create Something Amazing?
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+              Join thousands of users who are already creating stunning photos with Dreamy
+            </p>
+            
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 border border-gray-200 dark:border-gray-700 shadow-lg transition-colors duration-300">
+              <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Get Started Today</h3>
+              <AuthBlock onAuthenticated={handleAuthenticated} />
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </>
