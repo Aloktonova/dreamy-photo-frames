@@ -10,30 +10,75 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "12.2.12 (cd3cf9e)"
   }
   public: {
     Tables: {
+      media_analysis: {
+        Row: {
+          analysis_type: string
+          created_at: string
+          id: string
+          media_type: string
+          media_url: string | null
+          results: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analysis_type: string
+          created_at?: string
+          id?: string
+          media_type: string
+          media_url?: string | null
+          results: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analysis_type?: string
+          created_at?: string
+          id?: string
+          media_type?: string
+          media_url?: string | null
+          results?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          avatar_url: string | null
           country: string | null
           created_at: string | null
+          first_name: string | null
           id: string
           ip_address: string | null
+          last_name: string | null
+          phone: string | null
           username: string | null
         }
         Insert: {
+          avatar_url?: string | null
           country?: string | null
           created_at?: string | null
+          first_name?: string | null
           id: string
           ip_address?: string | null
+          last_name?: string | null
+          phone?: string | null
           username?: string | null
         }
         Update: {
+          avatar_url?: string | null
           country?: string | null
           created_at?: string | null
+          first_name?: string | null
           id?: string
           ip_address?: string | null
+          last_name?: string | null
+          phone?: string | null
           username?: string | null
         }
         Relationships: []
