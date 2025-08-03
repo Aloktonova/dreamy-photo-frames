@@ -152,8 +152,7 @@ const Home = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
-        ease: "easeOut"
+        duration: 0.6
       }
     }
   };
@@ -164,8 +163,7 @@ const Home = () => {
       opacity: 1,
       scale: 1,
       transition: {
-        duration: 0.5,
-        ease: "easeOut"
+        duration: 0.5
       }
     },
     hover: {
@@ -182,8 +180,7 @@ const Home = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
-        ease: "easeOut"
+        duration: 0.8
       }
     }
   };
@@ -209,8 +206,7 @@ const Home = () => {
             }}
             transition={{
               duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut"
+              repeat: Infinity
             }}
           />
           <motion.div 
@@ -222,7 +218,6 @@ const Home = () => {
             transition={{
               duration: 8,
               repeat: Infinity,
-              ease: "easeInOut",
               delay: 2
             }}
           />
@@ -235,7 +230,6 @@ const Home = () => {
             transition={{
               duration: 10,
               repeat: Infinity,
-              ease: "easeInOut",
               delay: 4
             }}
           />
