@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      generation_limits: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          image_count: number | null
+          plan_type: string | null
+          updated_at: string
+          user_id: string
+          video_count: number | null
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          image_count?: number | null
+          plan_type?: string | null
+          updated_at?: string
+          user_id: string
+          video_count?: number | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          image_count?: number | null
+          plan_type?: string | null
+          updated_at?: string
+          user_id?: string
+          video_count?: number | null
+        }
+        Relationships: []
+      }
       media_analysis: {
         Row: {
           analysis_type: string
@@ -42,6 +75,51 @@ export type Database = {
           media_type?: string
           media_url?: string | null
           results?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      media_generated: {
+        Row: {
+          created_at: string
+          id: string
+          is_public: boolean | null
+          likes_count: number | null
+          media_type: string
+          media_url: string
+          prompt: string
+          status: string | null
+          style: string | null
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          likes_count?: number | null
+          media_type: string
+          media_url: string
+          prompt: string
+          status?: string | null
+          style?: string | null
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          likes_count?: number | null
+          media_type?: string
+          media_url?: string
+          prompt?: string
+          status?: string | null
+          style?: string | null
+          tags?: string[] | null
           updated_at?: string
           user_id?: string
         }
@@ -80,6 +158,36 @@ export type Database = {
           last_name?: string | null
           phone?: string | null
           username?: string | null
+        }
+        Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          plan_type: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan_type?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan_type?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

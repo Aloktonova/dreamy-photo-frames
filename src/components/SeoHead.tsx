@@ -1,36 +1,70 @@
-import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-const SeoHead: React.FC = () => (
-  <Helmet>
-    <title>Dreamy Frames – Turn your ideas into AI-generated dream images.</title>
-    <meta name="description" content="Dreamy Frames is the easiest way to turn your ideas into beautiful, AI-generated dream images and collages. No design skills required. Try it free!" />
-    <meta name="keywords" content="AI photo editor, collage maker, dream images, photo frames, online editor, creative, design, generator, dreamy frames" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-    <meta name="theme-color" content="#7c3aed" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Dreamy Frames" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+interface SeoHeadProps {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  image?: string;
+  url?: string;
+  type?: 'website' | 'article';
+  structuredData?: any;
+}
 
-    {/* Open Graph / Facebook */}
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Dreamy Frames – Turn your ideas into AI-generated dream images." />
-    <meta property="og:description" content="Dreamy Frames is the easiest way to turn your ideas into beautiful, AI-generated dream images and collages. No design skills required. Try it free!" />
-    <meta property="og:url" content="https://dreamyframes.com/" />
-    <meta property="og:site_name" content="Dreamy Frames" />
-    <meta property="og:image" content="https://dreamyframes.com/og-image.jpg" />
+export const SeoHead: React.FC<SeoHeadProps> = ({
+  title = 'MediaGen AI - Advanced AI Media Generation & Analysis',
+  description = 'Generate stunning images and videos with AI. Analyze media content with Google Cloud Vision and Video Intelligence. Free daily generations included.',
+  keywords = 'AI media generation, image generation, video generation, media analysis, Google Cloud Vision, artificial intelligence, content creation',
+  image = '/og-image.jpg',
+  url = typeof window !== 'undefined' ? window.location.href : '',
+  type = 'website',
+  structuredData
+}) => {
+  const siteName = 'MediaGen AI';
+  const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 
-    {/* Twitter Card */}
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Dreamy Frames – Turn your ideas into AI-generated dream images." />
-    <meta name="twitter:description" content="Dreamy Frames is the easiest way to turn your ideas into beautiful, AI-generated dream images and collages. No design skills required. Try it free!" />
-    <meta name="twitter:image" content="https://dreamyframes.com/og-image.jpg" />
-    <meta name="twitter:site" content="@dreamyframes" />
-    <meta name="twitter:creator" content="@dreamyframes" />
+  return (
+    <Helmet>
+      {/* Basic Meta Tags */}
+      <title>{fullTitle}</title>
+      <meta name="description" content={description} />
+      <meta name="keywords" content={keywords} />
+      <meta name="author" content="MediaGen AI" />
+      <meta name="robots" content="index, follow" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      
+      {/* Open Graph Tags */}
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={image} />
+      <meta property="og:url" content={url} />
+      <meta property="og:type" content={type} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:locale" content="en_US" />
+      
+      {/* Twitter Card Tags */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={image} />
+      <meta name="twitter:creator" content="@mediagen_ai" />
+      <meta name="twitter:site" content="@mediagen_ai" />
+      
+      {/* Additional Meta Tags */}
+      <meta name="theme-color" content="#8B5CF6" />
+      <meta name="msapplication-TileColor" content="#8B5CF6" />
+      <meta name="msapplication-config" content="/browserconfig.xml" />
+      
+      {/* Canonical URL */}
+      <link rel="canonical" href={url} />
+      
+      {/* Structured Data */}
+      {structuredData && (
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      )}
+    </Helmet>
+  );
+};
 
-    {/* Favicon */}
-    <link rel="icon" href="/favicon.ico" />
-  </Helmet>
-);
-
-export default SeoHead; 
+export default SeoHead;

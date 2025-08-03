@@ -14,6 +14,8 @@ import EditProfile from "./pages/EditProfile";
 import Settings from "./pages/Settings";
 import Blog from "./pages/Blog";
 import Explore from "./pages/Explore";
+import Generate from "./pages/Generate";
+import Showcase from "./pages/Showcase";
 import NavigationTest from "./components/NavigationTest";
 
 const queryClient = new QueryClient();
@@ -27,6 +29,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/generate" element={<Generate />} />
+            <Route path="/showcase" element={<Showcase />} />
             <Route path="/collage" element={<PhotoCollage />} />
             <Route path="/edit" element={<EditPage />} />
             <Route path="/blog" element={<Blog />} />
