@@ -37,9 +37,8 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Navbar from './Navbar';
-import Footer from './Footer';
-import BottomNavBar from './BottomNavBar';
+import { Layout } from './Layout';
+import { SeoHead } from './SeoHead';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -186,8 +185,12 @@ const Home = () => {
   };
 
   return (
-    <>
-      <Navbar user={user} onLogout={logout} onLogin={login} />
+    <Layout showSidebar={false}>
+      <SeoHead 
+        title="MediaGen AI - Advanced AI Media Generation & Analysis"
+        description="Create stunning AI-generated images and videos. Analyze media content with Google Cloud Vision and Video Intelligence. Free daily generations included."
+        keywords="AI media generation, image generation, video generation, photo frames, collages, AI filters, Google Cloud Vision"
+      />
       
       {/* Hero Section */}
       <motion.section 
@@ -542,9 +545,7 @@ const Home = () => {
         </motion.div>
       </motion.section>
 
-      <Footer />
-      {user && <BottomNavBar />}
-    </>
+    </Layout>
   );
 };
 

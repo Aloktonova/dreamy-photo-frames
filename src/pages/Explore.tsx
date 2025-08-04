@@ -18,8 +18,8 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import BottomNavBar from '@/components/BottomNavBar';
-import PageTransition from '@/components/PageTransition';
+import { Layout } from '@/components/Layout';
+import { SeoHead } from '@/components/SeoHead';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -260,8 +260,13 @@ const Explore = () => {
   };
 
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-gray-900 dark:via-purple-900 dark:to-pink-900">
+    <Layout>
+      <SeoHead 
+        title="AI Media Analysis - Explore"
+        description="Analyze images and videos with Google Cloud Vision and Video Intelligence. Get detailed insights about your media content."
+        keywords="image analysis, video analysis, Google Cloud Vision, AI media analysis, content analysis"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 dark:from-muted/5 dark:via-primary/5 dark:to-secondary/5">
         {/* Header */}
         <div className="pt-6 pb-8">
           <div className="text-center space-y-2">
@@ -478,9 +483,7 @@ const Explore = () => {
           )}
         </div>
       </div>
-      
-      <BottomNavBar />
-    </PageTransition>
+    </Layout>
   );
 };
 

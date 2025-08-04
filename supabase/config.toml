@@ -16,6 +16,9 @@ verify_jwt = true
 [functions.check-video-operation]
 verify_jwt = true
 
+[functions.check-generation-limit]
+verify_jwt = true
+
 [db]
 port = 54322
 shadow_port = 54320

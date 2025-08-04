@@ -11,7 +11,8 @@ import {
   BarChart3,
   Crown,
   Menu,
-  X
+  X,
+  Info
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/AuthContext"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
+import { ThemeToggle } from "./ThemeToggle"
 
 const mainItems = [
   { title: "Home", url: "/", icon: Home },
@@ -35,7 +37,7 @@ const analysisItems = [
 const userItems = [
   { title: "Profile", url: "/profile", icon: User },
   { title: "Settings", url: "/settings", icon: Settings },
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
+  { title: "About", url: "/about", icon: Info },
 ]
 
 interface AppSidebarProps {
@@ -245,6 +247,13 @@ export function AppSidebar({ isCollapsed, onToggle }: AppSidebarProps) {
             </nav>
           </>
         )}
+      </div>
+
+      {/* Theme Toggle */}
+      <div className="p-4">
+        <div className="flex items-center justify-center">
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* Footer */}
