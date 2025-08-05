@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { validateName, validatePhone, sanitizeInput, ValidationError } from '@/utils/validation';
 
 const EditProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -15,10 +13,8 @@ const EditProfile: React.FC = () => {
     avatar_url: '',
   });
   const [avatarPreview, setAvatarPreview] = useState('');
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -31,13 +27,13 @@ const EditProfile: React.FC = () => {
       const userId = userData.user.id;
       const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
       setProfile({
-        first_name: (data as any)?.first_name || '',
-        last_name: (data as any)?.last_name || '',
+        first_name: data?.first_name || '',
+        last_name: data?.last_name || '',
         email: userData.user.email || '',
-        phone: (data as any)?.phone || '',
-        avatar_url: (data as any)?.avatar_url || '',
+        phone: data?.phone || '',
+        avatar_url: data?.avatar_url || '',
       });
-      setAvatarPreview((data as any)?.avatar_url || '');
+      setAvatarPreview(data?.avatar_url || '');
       setLoading(false);
     };
     fetchProfile();
@@ -55,37 +51,12 @@ const EditProfile: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setValidationErrors([]);
-
-    // Validate inputs
-    const firstNameError = validateName(profile.first_name, 'first_name');
-    const lastNameError = validateName(profile.last_name, 'last_name');
-    const phoneError = validatePhone(profile.phone);
-    const errors: ValidationError[] = [];
-
-    if (firstNameError) errors.push(firstNameError);
-    if (lastNameError) errors.push(lastNameError);
-    if (phoneError) errors.push(phoneError);
-
-    if (errors.length > 0) {
-      setValidationErrors(errors);
-      errors.forEach(error => {
-        toast({
-          title: "Validation Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      });
-      return;
-    }
-
     setSaving(true);
     try {
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData?.user) throw new Error('User not found');
       const userId = userData.user.id;
       let avatar_url = profile.avatar_url;
-      
       if (avatarPreview && avatarPreview !== profile.avatar_url && avatarPreview.startsWith('blob:')) {
         const file = fileInputRef.current?.files?.[0];
         if (file) {
@@ -95,30 +66,17 @@ const EditProfile: React.FC = () => {
           avatar_url = publicUrlData.publicUrl;
         }
       }
-      
       const { error: upsertError } = await supabase.from('profiles').upsert({
         id: userId,
-        first_name: sanitizeInput(profile.first_name),
-        last_name: sanitizeInput(profile.last_name),
-        phone: sanitizeInput(profile.phone),
+        first_name: profile.first_name,
+        last_name: profile.last_name,
+        phone: profile.phone,
         avatar_url,
       });
-      
       if (upsertError) throw upsertError;
-      
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been successfully updated.",
-      });
-      
       navigate('/profile');
     } catch (err) {
-      console.error('Profile update error:', err);
-      toast({
-        title: "Update Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive"
-      });
+      alert('Failed to update profile.');
     } finally {
       setSaving(false);
     }

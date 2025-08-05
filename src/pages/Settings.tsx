@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useDarkMode } from '@/hooks/useDarkMode';
 import BottomNavBar from '@/components/BottomNavBar';
 import PageTransition from '@/components/PageTransition';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,9 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const Settings = () => {
   const { user, logout } = useAuth();
-  const { actualTheme, setTheme } = useTheme();
-  const isDark = actualTheme === 'dark';
-  const toggleDarkMode = () => setTheme(isDark ? 'light' : 'dark');
+  const { isDark, toggleDarkMode } = useDarkMode();
   const { toast } = useToast();
   
   const [isEditing, setIsEditing] = useState(false);

@@ -42,11 +42,11 @@ const ProfileDropdown = () => {
         .eq('id', user.id)
         .single();
       setProfile({
-        first_name: (profileData as any)?.first_name || user.user_metadata?.given_name || '',
-        last_name: (profileData as any)?.last_name || user.user_metadata?.family_name || '',
+        first_name: profileData?.first_name || user.user_metadata?.given_name || '',
+        last_name: profileData?.last_name || user.user_metadata?.family_name || '',
         email: user.email || '',
-        phone: (profileData as any)?.phone || '',
-        avatar_url: user.user_metadata?.avatar_url || (profileData as any)?.avatar_url || '',
+        phone: profileData?.phone || '',
+        avatar_url: user.user_metadata?.avatar_url || profileData?.avatar_url || '',
       });
       setLoading(false);
     };

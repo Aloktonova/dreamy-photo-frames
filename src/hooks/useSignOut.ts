@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { cleanupAuthState } from '@/utils/validation';
 
 /**
  * Custom hook for consistent sign-out logic across the app.
@@ -10,23 +9,16 @@ import { cleanupAuthState } from '@/utils/validation';
 export function useSignOut(onSignedOut?: () => void) {
   const signOut = useCallback(async () => {
     try {
-      // Clean up auth state first
-      cleanupAuthState();
-      
-      // Attempt global sign out
-      await supabase.auth.signOut({ scope: 'global' });
-      
+      await supabase.auth.signOut();
       if (onSignedOut) {
         onSignedOut();
       } else {
-        // Force page reload for clean state
-        window.location.href = '/';
+        // Default: reload the page to clear state
+        window.location.reload();
       }
     } catch (error) {
-      // Even if sign out fails, clean up and redirect
+      // Optionally handle error (e.g., show toast)
       console.error('Sign out error:', error);
-      cleanupAuthState();
-      window.location.href = '/';
     }
   }, [onSignedOut]);
 

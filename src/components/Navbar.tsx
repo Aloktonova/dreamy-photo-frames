@@ -3,7 +3,7 @@ import { Menu, X, Sun, Moon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import UserDropdown from "./UserDropdown";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useDarkMode } from "@/hooks/useDarkMode";
 
 interface NavbarProps {
   user: any;
@@ -14,9 +14,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ user, onLogout, onLogin }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
-  const { actualTheme, setTheme } = useTheme();
-  const isDark = actualTheme === 'dark';
-  const toggleDarkMode = () => setTheme(isDark ? 'light' : 'dark');
+  const { isDark, toggleDarkMode } = useDarkMode();
 
   const handleLoginClick = async () => {
     if (onLogin) {

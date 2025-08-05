@@ -24,11 +24,11 @@ const ProfilePage: React.FC = () => {
       const userId = userData.user.id;
       const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
       setProfile({
-        first_name: (data as any)?.first_name || '',
-        last_name: (data as any)?.last_name || '',
+        first_name: data?.first_name || '',
+        last_name: data?.last_name || '',
         email: userData.user.email || '',
-        phone: (data as any)?.phone || '',
-        avatar_url: (data as any)?.avatar_url || '',
+        phone: data?.phone || '',
+        avatar_url: data?.avatar_url || '',
       });
       setLoading(false);
     };

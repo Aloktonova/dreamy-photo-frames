@@ -37,8 +37,9 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Layout } from './Layout';
-import { SeoHead } from './SeoHead';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import BottomNavBar from './BottomNavBar';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -151,7 +152,8 @@ const Home = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6
+        duration: 0.6,
+        ease: "easeOut"
       }
     }
   };
@@ -162,7 +164,8 @@ const Home = () => {
       opacity: 1,
       scale: 1,
       transition: {
-        duration: 0.5
+        duration: 0.5,
+        ease: "easeOut"
       }
     },
     hover: {
@@ -179,18 +182,15 @@ const Home = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8
+        duration: 0.8,
+        ease: "easeOut"
       }
     }
   };
 
   return (
-    <Layout showSidebar={false}>
-      <SeoHead 
-        title="MediaGen AI - Advanced AI Media Generation & Analysis"
-        description="Create stunning AI-generated images and videos. Analyze media content with Google Cloud Vision and Video Intelligence. Free daily generations included."
-        keywords="AI media generation, image generation, video generation, photo frames, collages, AI filters, Google Cloud Vision"
-      />
+    <>
+      <Navbar user={user} onLogout={logout} onLogin={login} />
       
       {/* Hero Section */}
       <motion.section 
@@ -209,7 +209,8 @@ const Home = () => {
             }}
             transition={{
               duration: 6,
-              repeat: Infinity
+              repeat: Infinity,
+              ease: "easeInOut"
             }}
           />
           <motion.div 
@@ -221,6 +222,7 @@ const Home = () => {
             transition={{
               duration: 8,
               repeat: Infinity,
+              ease: "easeInOut",
               delay: 2
             }}
           />
@@ -233,6 +235,7 @@ const Home = () => {
             transition={{
               duration: 10,
               repeat: Infinity,
+              ease: "easeInOut",
               delay: 4
             }}
           />
@@ -545,7 +548,9 @@ const Home = () => {
         </motion.div>
       </motion.section>
 
-    </Layout>
+      <Footer />
+      {user && <BottomNavBar />}
+    </>
   );
 };
 

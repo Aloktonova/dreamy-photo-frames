@@ -1,3 +1,4 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
@@ -5,171 +6,134 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-interface GenerationRequest {
-  mediaType: 'image' | 'video'
-  prompt?: string
-  style?: string
-}
-
-Deno.serve(async (req) => {
+serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
-    )
+    // Create Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Get the current user
-    const {
-      data: { user },
-      error: userError,
-    } = await supabaseClient.auth.getUser()
-
-    if (userError || !user) {
-      console.error('Authentication error:', userError)
+    // Get authorization header
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'No authorization header' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
       )
     }
 
-    const { mediaType, prompt, style }: GenerationRequest = await req.json()
-
-    // Get or create user subscription
-    let { data: subscription, error: subError } = await supabaseClient
-      .from('user_subscriptions')
-      .select('*')
-      .eq('user_id', user.id)
-      .single()
-
-    if (subError && subError.code === 'PGRST116') {
-      // No subscription found, create a free one
-      const { data: newSub, error: createError } = await supabaseClient
-        .from('user_subscriptions')
-        .insert({
-          user_id: user.id,
-          plan_type: 'free',
-          status: 'active'
-        })
-        .select()
-        .single()
-
-      if (createError) {
-        console.error('Error creating subscription:', createError)
-        return new Response(
-          JSON.stringify({ error: 'Failed to create subscription' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-      subscription = newSub
+    // Verify JWT token
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid token' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
-    // Get today's generation limits
-    const today = new Date().toISOString().split('T')[0]
-    let { data: limits, error: limitsError } = await supabaseClient
-      .from('generation_limits')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('date', today)
-      .single()
-
-    if (limitsError && limitsError.code === 'PGRST116') {
-      // No limits found for today, create new record
-      const { data: newLimits, error: createError } = await supabaseClient
-        .from('generation_limits')
-        .insert({
-          user_id: user.id,
-          date: today,
-          image_count: 0,
-          video_count: 0,
-          plan_type: subscription?.plan_type || 'free'
-        })
-        .select()
-        .single()
-
-      if (createError) {
-        console.error('Error creating limits:', createError)
-        return new Response(
-          JSON.stringify({ error: 'Failed to create limits' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-      limits = newLimits
+    // Parse request body
+    const { generation_type, prompt, style, metadata } = await req.json()
+    
+    if (!generation_type || !['image', 'video'].includes(generation_type)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid generation type' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
-    // Define limits based on plan
-    const dailyLimits = {
-      free: { image: 5, video: 2 },
-      pro: { image: 100, video: 50 }
+    // Check generation limits
+    const { data: limitData, error: limitError } = await supabase
+      .rpc('check_generation_limit', {
+        p_user_id: user.id,
+        p_generation_type: generation_type
+      })
+
+    if (limitError) {
+      console.error('Error checking generation limit:', limitError)
+      return new Response(
+        JSON.stringify({ error: 'Failed to check generation limits' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
-    const planType = subscription?.plan_type || 'free'
-    const currentCount = mediaType === 'image' ? limits.image_count : limits.video_count
-    const maxCount = dailyLimits[planType][mediaType]
-
-    const canGenerate = currentCount < maxCount
-
-    if (!canGenerate) {
+    // If user can't generate, return limit info
+    if (!limitData.can_generate) {
       return new Response(
         JSON.stringify({
           success: false,
-          error: 'Daily generation limit reached',
-          canGenerate: false,
-          remaining: 0,
-          currentCount,
-          maxCount,
-          planType,
-          mediaType
+          error: 'Generation limit exceeded',
+          limits: limitData
         }),
-        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
       )
     }
 
-    // Increment the count
-    const updateField = mediaType === 'image' ? 'image_count' : 'video_count'
-    const { error: updateError } = await supabaseClient
-      .from('generation_limits')
-      .update({ [updateField]: currentCount + 1 })
-      .eq('user_id', user.id)
-      .eq('date', today)
+    // Record the generation attempt
+    const { data: generationId, error: recordError } = await supabase
+      .rpc('record_generation', {
+        p_user_id: user.id,
+        p_generation_type: generation_type,
+        p_prompt: prompt || null,
+        p_style: style || null,
+        p_metadata: metadata || {}
+      })
 
-    if (updateError) {
-      console.error('Error updating limits:', updateError)
+    if (recordError) {
+      console.error('Error recording generation:', recordError)
       return new Response(
-        JSON.stringify({ error: 'Failed to update generation limits' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Failed to record generation' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
       )
     }
 
-    const remaining = Math.max(0, maxCount - (currentCount + 1))
-
+    // Return success with updated limits
     return new Response(
       JSON.stringify({
         success: true,
-        canGenerate: true,
-        remaining,
-        currentCount: currentCount + 1,
-        maxCount,
-        planType,
-        mediaType,
-        message: 'Generation approved'
+        generation_id: generationId,
+        limits: limitData,
+        message: 'Generation started successfully'
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        status: 200, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     )
+
   } catch (error) {
-    console.error('Error in check-generation-limit function:', error)
+    console.error('Edge function error:', error)
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     )
   }
-})
+}) 

@@ -1,104 +1,188 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 interface GenerationLimits {
-  canGenerate: boolean;
-  remaining: number;
-  currentCount: number;
-  maxCount: number;
-  planType: 'free' | 'pro';
-  mediaType: 'image' | 'video';
+  can_generate: boolean;
+  daily_used: number;
+  daily_limit: number;
+  monthly_used: number;
+  monthly_limit: number;
+  plan_type: string;
+  remaining_daily: number;
+  remaining_monthly: number;
 }
 
-interface UseGenerationLimitsReturn {
-  limits: GenerationLimits | null;
-  loading: boolean;
-  checkLimits: (mediaType: 'image' | 'video') => Promise<GenerationLimits | null>;
-  requestGeneration: (mediaType: 'image' | 'video', prompt: string, style?: string) => Promise<{ success: boolean; error?: string; data?: any }>;
+interface GenerationResponse {
+  success: boolean;
+  generation_id?: string;
+  limits?: GenerationLimits;
+  error?: string;
+  message?: string;
 }
 
-export const useGenerationLimits = (): UseGenerationLimitsReturn => {
+export const useGenerationLimits = () => {
   const { user } = useAuth();
   const [limits, setLimits] = useState<GenerationLimits | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const checkLimits = async (mediaType: 'image' | 'video'): Promise<GenerationLimits | null> => {
-    if (!user) return null;
+  // Fetch current limits
+  const fetchLimits = async (generationType: 'image' | 'video') => {
+    if (!user) return;
 
-    setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('check-generation-limit', {
-        body: { mediaType }
-      });
+      setLoading(true);
+      setError(null);
 
-      if (error) {
-        console.error('Error checking limits:', error);
-        toast.error('Failed to check generation limits');
-        return null;
+      const { data, error: fetchError } = await supabase
+        .rpc('check_generation_limit', {
+          p_user_id: user.id,
+          p_generation_type: generationType
+        });
+
+      if (fetchError) {
+        throw fetchError;
       }
 
-      const limitsData = data as GenerationLimits;
-      setLimits(limitsData);
-      return limitsData;
-    } catch (error) {
-      console.error('Error checking limits:', error);
-      toast.error('Failed to check generation limits');
-      return null;
+      setLimits(data);
+    } catch (err) {
+      console.error('Error fetching limits:', err);
+      setError('Failed to fetch generation limits');
     } finally {
       setLoading(false);
     }
   };
 
+  // Request generation with rate limiting
   const requestGeneration = async (
-    mediaType: 'image' | 'video',
+    generationType: 'image' | 'video',
     prompt: string,
-    style?: string
-  ): Promise<{ success: boolean; error?: string; data?: any }> => {
+    style: string,
+    metadata?: Record<string, any>
+  ): Promise<GenerationResponse> => {
     if (!user) {
       return { success: false, error: 'User not authenticated' };
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke('check-generation-limit', {
-        body: { mediaType, prompt, style }
+      setLoading(true);
+      setError(null);
+
+      // Get session for authorization
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        return { success: false, error: 'No active session' };
+      }
+
+      // Call Edge function for rate limiting
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/check-generation-limit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+        },
+        body: JSON.stringify({
+          generation_type: generationType,
+          prompt,
+          style,
+          metadata: metadata || {}
+        })
       });
 
-      if (error) {
-        console.error('Generation request failed:', error);
-        return { success: false, error: error.message || 'Generation failed' };
+      const result: GenerationResponse = await response.json();
+
+      if (response.ok && result.success) {
+        setLimits(result.limits || null);
+        return result;
+      } else {
+        setError(result.error || 'Generation request failed');
+        return result;
       }
-
-      if (!data.success) {
-        return { success: false, error: data.error || 'Generation limit reached' };
-      }
-
-      // Update local limits state
-      setLimits(data);
-
-      return { success: true, data };
-    } catch (error: any) {
-      console.error('Error requesting generation:', error);
-      return { success: false, error: error.message || 'Failed to request generation' };
+    } catch (err) {
+      console.error('Error requesting generation:', err);
+      const errorMessage = 'Failed to request generation';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (user && limits) {
-      // Auto-refresh limits every minute
-      const interval = setInterval(() => {
-        checkLimits(limits.mediaType);
-      }, 60000);
+  // Update generation status
+  const updateGenerationStatus = async (
+    generationId: string,
+    status: 'generating' | 'completed' | 'failed',
+    url?: string
+  ) => {
+    if (!user) return;
 
-      return () => clearInterval(interval);
+    try {
+      const { error } = await supabase
+        .from('generation_limits')
+        .update({ 
+          status,
+          metadata: url ? { url } : undefined
+        })
+        .eq('id', generationId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error updating generation status:', error);
+      }
+    } catch (err) {
+      console.error('Error updating generation status:', err);
     }
-  }, [user, limits?.mediaType]);
+  };
+
+  // Get user subscription info
+  const getUserSubscription = async () => {
+    if (!user) return null;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_subscriptions')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching subscription:', error);
+        return null;
+      }
+
+      return data;
+    } catch (err) {
+      console.error('Error fetching subscription:', err);
+      return null;
+    }
+  };
+
+  // Check if user can generate
+  const canGenerate = (type: 'image' | 'video') => {
+    if (!limits) return false;
+    return limits.can_generate;
+  };
+
+  // Get remaining generations
+  const getRemaining = (type: 'image' | 'video') => {
+    if (!limits) return { daily: 0, monthly: 0 };
+    return {
+      daily: limits.remaining_daily,
+      monthly: limits.remaining_monthly
+    };
+  };
 
   return {
     limits,
     loading,
-    checkLimits,
-    requestGeneration
+    error,
+    fetchLimits,
+    requestGeneration,
+    updateGenerationStatus,
+    getUserSubscription,
+    canGenerate,
+    getRemaining
   };
-};
+}; 
