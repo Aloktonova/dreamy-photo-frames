@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Chrome, Mail, Lock, UserPlus } from 'lucide-react';
+import { validateEmail, validatePassword, cleanupAuthState, ValidationError } from '@/utils/validation';
 
 interface AuthBlockProps {
   onAuthenticated: (user: User) => void;
@@ -16,22 +17,17 @@ const AuthBlock: React.FC<AuthBlockProps> = ({ onAuthenticated }) => {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const { toast } = useToast();
 
   const handleUserProfile = async (user: User) => {
     try {
-      // Fetch IP and country data
-      const response = await fetch('https://ipapi.co/json/');
-      const locationData = await response.json();
-      
-      // Upsert user profile data
+      // Create user profile with basic information only
       await supabase
         .from('profiles')
         .upsert({
           id: user.id,
           username: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
-          country: locationData.country_name || null,
-          ip_address: locationData.ip || null,
         });
     } catch (error) {
       console.error('Error updating user profile:', error);
@@ -75,6 +71,9 @@ const AuthBlock: React.FC<AuthBlockProps> = ({ onAuthenticated }) => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
+      // Clean up any existing auth state before signing in
+      cleanupAuthState();
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -103,12 +102,37 @@ const AuthBlock: React.FC<AuthBlockProps> = ({ onAuthenticated }) => {
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationErrors([]);
+    
+    // Validate inputs
+    const emailError = validateEmail(email);
+    const passwordError = mode === 'signup' ? validatePassword(password) : null;
+    const errors: ValidationError[] = [];
+    
+    if (emailError) errors.push(emailError);
+    if (passwordError) errors.push(passwordError);
+    
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      errors.forEach(error => {
+        toast({
+          title: "Validation Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // Clean up auth state before attempting authentication
+      cleanupAuthState();
+      
       if (mode === 'signup') {
         const { error } = await supabase.auth.signUp({
-          email,
+          email: email.trim(),
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/`
@@ -129,7 +153,7 @@ const AuthBlock: React.FC<AuthBlockProps> = ({ onAuthenticated }) => {
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: email.trim(),
           password
         });
         
